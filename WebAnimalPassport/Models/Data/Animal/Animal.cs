@@ -11,7 +11,7 @@ namespace WebAnimalPassport.Models.Data.Animal
         [Required]
         [ForeignKey("Users")]
         public long UserId { get; set; }
-        public User.User User { get; set; }
+        public Data.CustomUser User { get; set; }
         [DisplayName("Дата смерти")]
         public DateTime? DeathDate { get; set; }
         public string? PhotoPath { get; set; }
