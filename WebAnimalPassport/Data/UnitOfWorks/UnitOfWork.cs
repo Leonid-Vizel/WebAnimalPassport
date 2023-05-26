@@ -10,7 +10,6 @@ public class UnitOfWork : IUnitOfWork
     public UnitOfWork(ApplicationDbContext context)
     {
         Context = context;
-        Mapper = mapper;
     }
 
     public async Task MigrateAsync()

@@ -7,5 +7,8 @@ namespace WebAnimalPassport.Models.View.Animal
     {
         [DisplayName("Фото питомца")]
         public IFormFile File { get; set; }
+
+        public AnimalCreateModel() : base() { }
+        public AnimalCreateModel(AnimalBase model) : base(model) { }
     }
 }
