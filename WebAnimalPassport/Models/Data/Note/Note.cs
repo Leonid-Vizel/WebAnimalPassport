@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WebAnimalPassport.Models.Data.Animal;
 
 namespace WebAnimalPassport.Models.Data.Note
 {
@@ -6,5 +7,6 @@ namespace WebAnimalPassport.Models.Data.Note
     {
         [Key]
         public long Id { get; set; }
+        public Animal.Animal Animal { get; set; }
     }
 }

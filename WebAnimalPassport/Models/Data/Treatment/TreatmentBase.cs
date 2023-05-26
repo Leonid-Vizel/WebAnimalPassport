@@ -16,5 +16,8 @@ namespace WebAnimalPassport.Models.Data.Treatment
         public string? Drug { get; set; }
         [DisplayName("Доза (Если применимо)")]
         public double? Doze { get; set; }
+        [DisplayName("ФИО ветеринарного врача")]
+        [MaxLength(10000, ErrorMessage = "Максимальная длина - 10000 символов!")]
+        public string? DoctorName { get; set; }
     }
 }
