@@ -8,5 +8,8 @@ namespace WebAnimalPassport.Models.Data.Treatment
         [DisplayName("Дата и время")]
         [Required(ErrorMessage = "Укажите дату и время!")]
         public DateTime DateTime { get; set; }
+        [DisplayName("Название обработки")]
+        [Required(ErrorMessage = "Укажите название обработки!")]
+        public string TreatmentType { get; set;}
     }
 }
