@@ -12,11 +12,11 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
 {
     public class PersonalDataModel : PageModel
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<CustomUser> _userManager;
         private readonly ILogger<PersonalDataModel> _logger;
 
         public PersonalDataModel(
-            UserManager<User> userManager,
+            UserManager<CustomUser> userManager,
             ILogger<PersonalDataModel> logger)
         {
             _userManager = userManager;

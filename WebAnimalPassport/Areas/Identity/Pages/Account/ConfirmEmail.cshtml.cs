@@ -17,9 +17,9 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailModel : PageModel
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<CustomUser> _userManager;
 
-        public ConfirmEmailModel(UserManager<User> userManager)
+        public ConfirmEmailModel(UserManager<CustomUser> userManager)
         {
             _userManager = userManager;
         }

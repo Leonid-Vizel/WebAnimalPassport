@@ -17,14 +17,14 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
 {
     public class ExternalLoginsModel : PageModel
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
-        private readonly IUserStore<User> _userStore;
+        private readonly UserManager<CustomUser> _userManager;
+        private readonly SignInManager<CustomUser> _signInManager;
+        private readonly IUserStore<CustomUser> _userStore;
 
         public ExternalLoginsModel(
-            UserManager<User> userManager,
-            SignInManager<User> signInManager,
-            IUserStore<User> userStore)
+            UserManager<CustomUser> userManager,
+            SignInManager<CustomUser> signInManager,
+            IUserStore<CustomUser> userStore)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -70,7 +70,7 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
                 .ToList();
 
             string passwordHash = null;
-            if (_userStore is IUserPasswordStore<User> userPasswordStore)
+            if (_userStore is IUserPasswordStore<CustomUser> userPasswordStore)
             {
                 passwordHash = await userPasswordStore.GetPasswordHashAsync(user, HttpContext.RequestAborted);
             }

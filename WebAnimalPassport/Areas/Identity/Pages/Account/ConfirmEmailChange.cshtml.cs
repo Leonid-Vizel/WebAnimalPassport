@@ -16,10 +16,10 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailChangeModel : PageModel
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<CustomUser> _userManager;
+        private readonly SignInManager<CustomUser> _signInManager;
 
-        public ConfirmEmailChangeModel(UserManager<User> userManager, SignInManager<User> signInManager)
+        public ConfirmEmailChangeModel(UserManager<CustomUser> userManager, SignInManager<CustomUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
