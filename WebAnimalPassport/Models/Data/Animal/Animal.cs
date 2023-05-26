@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebAnimalPassport.Models.Data.Animal
 {
@@ -8,10 +7,7 @@ namespace WebAnimalPassport.Models.Data.Animal
     {
         [Key]
         public long Id { get; set; }
-        [Required]
-        [ForeignKey("Users")]
-        public long UserId { get; set; }
-        public Data.CustomUser User { get; set; }
+        public CustomUser User { get; set; }
         [DisplayName("Дата смерти")]
         public DateTime? DeathDate { get; set; }
         public string? PhotoPath { get; set; }

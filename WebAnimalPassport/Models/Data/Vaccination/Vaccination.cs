@@ -7,9 +7,8 @@ namespace WebAnimalPassport.Models.Data.Vaccination
     {
         [Key]
         public long Id { get; set; }
-        [ForeignKey("Animals")]
-        public long AnimalId { get; set; }
         public Animal.Animal Animal { get; set; }
+        public CustomUser? Doctor { get; set; }
         public string? PhotoPath { get; set; }
     }
 }
