@@ -1,0 +1,21 @@
+﻿@model AnimalEditModel
+@{
+    ViewData["Title"] = "Изменение данных паспорта питомца";
+}
+<h1 class="text-center">@ViewData["Title"]</h1>
+<form method="post" enctype='multipart/form-data'>
+    <input asp-for="Id" hidden>
+    <partial name="_AnimalModifyModel" />
+    <div class="row">
+        <div class="col-6">
+            <a role="button" class="btn btn-dark w-100" asp-controller="Animal" asp-action="Index" asp-route-id="@Model.Id">Назад</a>
+        </div>
+        <div class="col-6">
+            <button type="submit" class="btn btn-dark w-100"> Изменить</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

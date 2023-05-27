@@ -6,17 +6,22 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
+using WebAnimalPassport.Areas.Identity.SD;
 using WebAnimalPassport.Models.Data;
 
 namespace WebAnimalPassport.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<CustomUser> _signInManager;
         private readonly UserManager<CustomUser> _userManager;
         private readonly IUserStore<CustomUser> _userStore;
@@ -25,12 +30,14 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account
         private readonly IEmailSender _emailSender;
 
         public RegisterModel(
+            RoleManager<IdentityRole> roleManager,
             UserManager<CustomUser> userManager,
             IUserStore<CustomUser> userStore,
             SignInManager<CustomUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
+            _roleManager = roleManager;
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
@@ -91,11 +98,62 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            public string? Role { get; set; }
+            [ValidateNever]
+            public IEnumerable<SelectListItem> RoleList { get; set; }
+
+            [DisplayName("Имя")]
+            [Required(ErrorMessage = "Укажите имя!")]
+            [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
+            public string Name { get; set; }
+            [DisplayName("Фамилия")]
+            [Required(ErrorMessage = "Укажите фамилию!")]
+            [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
+            public string Surname { get; set; }
+            [DisplayName("Отчество")]
+            [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
+            public string? Patronymic { get; set; }
+            [DisplayName("Город")]
+            [Required(ErrorMessage = "Укажите город!")]
+            [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
+            public string City { get; set; }
+            [DisplayName("Регион")]
+            [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
+            public string? Region { get; set; }
+            [DisplayName("Страна")]
+            [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
+            public string? Country { get; set; }
+            [DisplayName("Адрес")]
+            [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
+            public string? Address { get; set; }
+            [DisplayName("Индекс")]
+            [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
+            public string? Index { get; set; }
+            [DisplayName("Телефон")]
+            [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
+            public string? PhoneNumber { get; set; }
         }
 
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            if (!_roleManager.RoleExistsAsync(Roles.Role_Owner).GetAwaiter().GetResult())
+            {
+                _roleManager.CreateAsync(new IdentityRole(Roles.Role_Owner)).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(Roles.Role_Admin)).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(Roles.Role_VeterinaryClinic)).GetAwaiter().GetResult();
+            }
+
+            Input = new()
+            {
+                RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
+                {
+                    Text = i,
+                    Value = i
+                })
+            };
+
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -107,18 +165,38 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
+                user.EmailConfirmed = true;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                user.Name = Input.Name;
+                user.Surname = Input.Surname;
+                user.Patronymic = Input.Patronymic;
+                user.City = Input.City;
+                user.Region = Input.Region;
+                user.Country = Input.Country;
+                user.Address = Input.Address;
+                user.PhoneNumber = Input.PhoneNumber;
+                user.Index = Input.Index;
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
 
+                    if (!String.IsNullOrEmpty(Input.Role))
+                    {
+                        await _userManager.AddToRoleAsync(user, Input.Role);
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, Roles.Role_Owner);
+                    }
+
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
                         pageHandler: null,
@@ -130,7 +208,8 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        //return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        return RedirectToAction("List", "Animal");
                     }
                     else
                     {

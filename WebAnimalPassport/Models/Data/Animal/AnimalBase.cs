@@ -10,10 +10,6 @@ namespace WebAnimalPassport.Models.Data.Animal
         [Required(ErrorMessage = "Укажите кличку!")]
         [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
         public string Name { get; set; }
-        [DisplayName("Вид")]
-        [Required(ErrorMessage = "Укажите вид!")]
-        [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
-        public string Species { get; set; }
         [DisplayName("Порода")]
         [Required(ErrorMessage = "Укажите породу!")]
         [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
@@ -22,6 +18,9 @@ namespace WebAnimalPassport.Models.Data.Animal
         [Required(ErrorMessage = "Укажите пол!")]
         [Range(0,2, ErrorMessage = "Укажите пол!")]
         public Sex Sex { get; set; }
+        [DisplayName("Вид")]
+        [Required(ErrorMessage = "Укажите вид!")]
+        public AnimalType Type { get; set; }
         [DisplayName("Шерсть")]
         [Required(ErrorMessage = "Укажите описание шерсти (например: окрас)!")]
         [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
@@ -39,12 +38,16 @@ namespace WebAnimalPassport.Models.Data.Animal
         public string? TattoNumber { get; set; }
         [DisplayName("Дата клеймления")]
         public DateTime? TattoDate { get; set; }
+        [DisplayName("Дата рождения")]
+        [Required(ErrorMessage = "Укажите дату рождения!")]
+        public DateTime BirthDate { get; set; }
 
         public AnimalBase() : base() { }
         public AnimalBase(AnimalBase model) : this()
         {
             Name = model.Name;
-            Species = model.Species;
+            Type = model.Type;
+            BirthDate = model.BirthDate;
             Breed = model.Breed;
             Sex = model.Sex;
             Hair = model.Hair;
@@ -58,7 +61,8 @@ namespace WebAnimalPassport.Models.Data.Animal
         public void Update(AnimalBase model)
         {
             Name = model.Name;
-            Species = model.Species;
+            BirthDate = model.BirthDate;
+            Type = model.Type;
             Breed = model.Breed;
             Sex = model.Sex;
             Hair = model.Hair;

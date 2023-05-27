@@ -1,0 +1,144 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@using WebAnimalPassport.Models.Data;
+
+@inject SignInManager<CustomUser> SignInManager
+@inject UserManager<CustomUser> UserManager
+
+@model Animal
+@{
+    ViewData["Title"] = $"Питомец - {Model.Name}";
+}
+
+<div class="d-flex justify-content-center">
+    <h1 class="border border border-dark rounded py-2">@ViewData["Title"]</h1>
+</div>
+<h1 class="text-center">Владелец питомца</h1>
+<hr>
+<div class="d-flex justify-content-around">
+    <div class="d-flex flex-column">
+        <h5>Имя - Name</h5>
+        <p>@Model.User.Name</p>
+        <h5>Фамилия - Surname</h5>
+        <p>@Model.User.Surname</p>
+        <h5>Адрес</h5>
+        <p>@Model.User.Address</p>
+        <h5>Период опеки</h5>
+        <p>
+            @if (Model.Owners.Count == 0)
+            {
+                @Model.BirthDate.ToString("dd.MM.yyyy") @:- @(Model.DeathDate?.ToString("dd.MM.yyyy") ?? "наст.вр.")
+            }
+            else
+            {
+                @Model.Owners.Last().TransmitDate.ToString("dd.MM.yyyy") @:- @(Model.DeathDate?.ToString("dd.MM.yyyy") ?? "наст.вр.")
+            }
+        </p>
+    </div>
+    <div class="d-flex flex-column">
+        <h5>Индекс - Post-code</h5>
+        <p>@(Model.User.Index ?? "Не указан")</p>
+        <h5>Город - City</h5>
+        <p>@Model.User.City</p>
+        <h5>Регион - Region</h5>
+        <p>@(Model.User.City ?? "Не указан")</p>
+        <h5>Страна - Country</h5>
+        <p>@(Model.User.Country ?? "Не указана")</p>
+    </div>
+</div>
+<h1 class="text-center">Заводчик питомца</h1>
+<hr>
+<div class="d-flex justify-content-around">
+    <div class="d-flex flex-column">
+        <h5>Имя - Name</h5>
+        <p>@Model.InitialUser.Name</p>
+        <h5>Фамилия - Surname</h5>
+        <p>@Model.InitialUser.Surname</p>
+        <h5>Адрес</h5>
+        <p>@Model.InitialUser.Address</p>
+        <h5>Период опеки</h5>
+        <p>
+            @if (Model.Owners.Count == 0)
+            {
+                @Model.BirthDate.ToString("dd.MM.yyyy") @:- @(Model.DeathDate?.ToString("dd.MM.yyyy") ?? "наст.вр.")
+            }
+            else
+            {
+                @Model.BirthDate.ToString("dd.MM.yyyy") @:- @Model.Owners.First().TransmitDate.ToString("dd.MM.yyyy")
+            }
+        </p>
+    </div>
+    <div class="d-flex flex-column">
+        <h5>Индекс - Post-code</h5>
+        <p>@(Model.InitialUser.Index ?? "Не указан")</p>
+        <h5>Город - City</h5>
+        <p>@Model.InitialUser.City</p>
+        <h5>Регион - Region</h5>
+        <p>@(Model.InitialUser.City ?? "Не указан")</p>
+        <h5>Страна - Country</h5>
+        <p>@(Model.InitialUser.Country ?? "Не указана")</p>
+    </div>
+</div>
+<h1 class="text-center">Описание питомца</h1>
+<hr>
+<div class="row justify-content-around">
+    <div class="col-12 col-sm-6 col-lg-3">
+        @if (Model.PhotoPath != null)
+        {
+            <img class="rounded-custom w-100 h-100" src="~/src/Animals/@Model.PhotoPath">
+        }
+        else
+        {
+            @switch (Model.Type)
+            {
+                case AnimalType.Cat:
+                    <img class="rounded-custom w-100 h-100" src="~/src/Stocks/cat.svg">
+                    break;
+                case AnimalType.Dog:
+                    <img class="rounded-custom w-100 h-100" src="~/src/Stocks/dog.svg">
+                    break;
+            }
+        }
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3">
+        <h5>Кличка - Name</h5>
+        <p>@Model.Name</p>
+        <h5>Вид - Species</h5>
+        <p>@Model.Type.GetDisplayName()</p>
+        <h5>Порода - Breed</h5>
+        <p>@Model.Breed</p>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-3">
+        <h5>Пол - Sex</h5>
+        <p>@Model.Sex.GetDisplayName()</p>
+        <h5>Дата рождения - Date of birth</h5>
+        <p>@Model.BirthDate.ToString("dd.MM.yyyy")</p>
+        <h5>Шерсть - Hair</h5>
+        <p>@Model.Hair</p>
+    </div>
+</div>
+<h1 class="text-center">Идентификация питомца</h1>
+<hr>
+<div class="d-flex justify-content-around">
+    <div class="d-flex flex-column">
+        <h5>Микрочип номер - Microchip number</h5>
+        <p>@(Model.ChipNumber ?? "Не указано")</p>
+        <h5>Дата чипирования - Date of Microchiping</h5>
+        <p>@(Model.ChipDate?.ToString("dd.MM.yyyy") ?? "Не указано")</p>
+        <h5>Расположение микрочипа - Microchip location</h5>
+        <p>@(Model.ChipLocation ?? "Не указано")</p>
+    </div>
+    <div class="d-flex flex-column">
+        <h5>Клеймо - Tattoo number</h5>
+        <p>@(Model.TattoNumber ?? "Не указано")</p>
+        <h5>Дата клеймения - Date of Tattooing</h5>
+        <p>@(Model.TattoDate?.ToString("dd.MM.yyyy") ?? "Не указано")</p>
+    </div>
+</div>
+@if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.User.Id)
+{
+    <h1 class="text-center">Действия</h1>
+    <hr>
+    <a class="btn btn-primary w-100" asp-controller="Animal" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
+    <a class="btn btn-dark w-100 my-2" asp-controller="Animal" asp-action="Transmit" asp-route-id="@Model.Id">Передать другому пользователю</a>
+    <a class="btn btn-danger w-100" asp-controller="Animal" asp-action="Death" asp-route-id="@Model.Id">Заявить о смерти</a>
+}
