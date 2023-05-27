@@ -22,7 +22,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LogoutPath = $"/Identity/Accaunt/Logout";
     options.AccessDeniedPath = $"/Identity/Accaunt/AccessDenied";
 });
-
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
