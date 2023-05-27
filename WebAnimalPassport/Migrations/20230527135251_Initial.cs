@@ -36,7 +36,10 @@ namespace WebAnimalPassport.Migrations
                     Surname = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     Patronymic = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     City = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    Region = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     Country = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    Address = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    Index = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -55,20 +58,6 @@ namespace WebAnimalPassport.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Treatments",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    PhotoPath = table.Column<string>(type: "text", nullable: true),
-                    DateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Treatments", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -98,27 +87,33 @@ namespace WebAnimalPassport.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
-                    UserId1 = table.Column<string>(type: "text", nullable: true),
-                    DeathDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    InitialUserId = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<string>(type: "text", nullable: true),
+                    DeathDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     PhotoPath = table.Column<string>(type: "text", nullable: true),
                     Name = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
-                    Species = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
                     Breed = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
                     Sex = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
                     Hair = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
                     ChipNumber = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    ChipDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ChipDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     ChipLocation = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     TattoNumber = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    TattoDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    TattoDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    BirthDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Animals", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Animals_AspNetUsers_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_Animals_AspNetUsers_InitialUserId",
+                        column: x => x.InitialUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Animals_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                 });
@@ -209,13 +204,97 @@ namespace WebAnimalPassport.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Notes",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AnimalId = table.Column<long>(type: "bigint", nullable: false),
+                    Text = table.Column<string>(type: "character varying(30000)", maxLength: 30000, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Notes_Animals_AnimalId",
+                        column: x => x.AnimalId,
+                        principalTable: "Animals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OwnerHistory",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: true),
+                    AnimalId = table.Column<long>(type: "bigint", nullable: false),
+                    TransmitDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    Reason = table.Column<string>(type: "character varying(10000)", maxLength: 10000, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OwnerHistory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OwnerHistory_Animals_AnimalId",
+                        column: x => x.AnimalId,
+                        principalTable: "Animals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OwnerHistory_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Treatments",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AnimalId = table.Column<long>(type: "bigint", nullable: false),
+                    DoctorId = table.Column<string>(type: "text", nullable: true),
+                    PhotoPath = table.Column<string>(type: "text", nullable: true),
+                    DateTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    TreatmentType = table.Column<string>(type: "text", nullable: false),
+                    Drug = table.Column<string>(type: "character varying(10000)", maxLength: 10000, nullable: true),
+                    Doze = table.Column<double>(type: "double precision", nullable: true),
+                    DoctorName = table.Column<string>(type: "character varying(10000)", maxLength: 10000, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Treatments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Treatments_Animals_AnimalId",
+                        column: x => x.AnimalId,
+                        principalTable: "Animals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Treatments_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Vaccinations",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     AnimalId = table.Column<long>(type: "bigint", nullable: false),
-                    PhotoPath = table.Column<string>(type: "text", nullable: true)
+                    DoctorId = table.Column<string>(type: "text", nullable: true),
+                    PhotoPath = table.Column<string>(type: "text", nullable: true),
+                    Type = table.Column<string>(type: "text", nullable: false),
+                    Series = table.Column<string>(type: "text", nullable: true),
+                    DoctorName = table.Column<string>(type: "character varying(10000)", maxLength: 10000, nullable: true),
+                    StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -226,12 +305,22 @@ namespace WebAnimalPassport.Migrations
                         principalTable: "Animals",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Vaccinations_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Animals_UserId1",
+                name: "IX_Animals_InitialUserId",
                 table: "Animals",
-                column: "UserId1");
+                column: "InitialUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Animals_UserId",
+                table: "Animals",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -271,9 +360,39 @@ namespace WebAnimalPassport.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Notes_AnimalId",
+                table: "Notes",
+                column: "AnimalId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OwnerHistory_AnimalId",
+                table: "OwnerHistory",
+                column: "AnimalId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OwnerHistory_UserId",
+                table: "OwnerHistory",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Treatments_AnimalId",
+                table: "Treatments",
+                column: "AnimalId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Treatments_DoctorId",
+                table: "Treatments",
+                column: "DoctorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Vaccinations_AnimalId",
                 table: "Vaccinations",
                 column: "AnimalId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vaccinations_DoctorId",
+                table: "Vaccinations",
+                column: "DoctorId");
         }
 
         /// <inheritdoc />
@@ -293,6 +412,12 @@ namespace WebAnimalPassport.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Notes");
+
+            migrationBuilder.DropTable(
+                name: "OwnerHistory");
 
             migrationBuilder.DropTable(
                 name: "Treatments");

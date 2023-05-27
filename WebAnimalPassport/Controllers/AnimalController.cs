@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using WebAnimalPassport.Data;
 using WebAnimalPassport.Models.Data;
 using WebAnimalPassport.Models.Data.Animal;
-using WebAnimalPassport.Models.Enums;
 using WebAnimalPassport.Models.View.Animal;
 
 namespace WebAnimalPassport.Controllers
@@ -13,36 +13,25 @@ namespace WebAnimalPassport.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<CustomUser> _userManager;
-        public AnimalController(ApplicationDbContext context, UserManager<CustomUser> userManager)
+        private readonly IWebHostEnvironment _env;
+        public AnimalController(ApplicationDbContext context, UserManager<CustomUser> userManager, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
             _userManager = userManager;
         }
         #region List
         public async Task<IActionResult> List()
         {
-            List<Animal> list = new List<Animal>()
+            string? userId = _userManager.GetUserId(User);
+            if (userId == null)
             {
-                new Animal()
-                {
-                    Name = "Тест 1",
-                    Type = AnimalType.Cat,
-                },
-                new Animal()
-                {
-                    Name = "Тест 2",
-                    Type = AnimalType.Dog,
-                }
-            };
-            //string? userId = _userManager.GetUserId(User);
-            //if (userId == null)
-            //{
-            //    return Forbid();
-            //}
-            //List<Animal> list = await _context.Animals
-            //    .Include(x => x.User)
-            //    .Where(x=>x.User.Id == userId)
-            //    .ToListAsync();
+                return Forbid();
+            }
+            List<Animal> list = await _context.Animals
+                .Include(x => x.User)
+                .Where(x => x.User.Id == userId)
+                .ToListAsync();
             return View(list);
         }
         #endregion
@@ -51,7 +40,7 @@ namespace WebAnimalPassport.Controllers
         {
             Animal? found = await _context.Animals
                 .Include(x => x.User)
-                .Include(x => x.Owners)
+                .Include(x => x.Owners.OrderBy(x=>x.TransmitDate))
                 .Include(x => x.InitialUser)
                 .FirstOrDefaultAsync(x => x.Id == id);
             if (found == null)
@@ -78,15 +67,38 @@ namespace WebAnimalPassport.Controllers
             CustomUser? user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                Forbid();
-            }
-            if (!ModelState.IsValid)
-            {
-                return View(model);
+                return Forbid();
             }
             Animal animal = new Animal(model);
             animal.User = user;
             animal.InitialUser = user;
+            if (model.File != null)
+            {
+                Guid guid = Guid.NewGuid();
+                string extension = Path.GetExtension(model.File.FileName);
+                string completePath = $"{_env.WebRootPath}/src/Animals/{guid}{extension}";
+                while (System.IO.File.Exists(completePath))
+                {
+                    guid = Guid.NewGuid();
+                    completePath = $"{_env.WebRootPath}/src/Animals/{guid}{extension}";
+                }
+                try
+                {
+                    using (FileStream createStream = new FileStream(completePath, FileMode.Create))
+                    {
+                        await model.File.CopyToAsync(createStream);
+                    }
+                }
+                catch
+                {
+                    ModelState.AddModelError("File", "Ошибка загрузки файла!");
+                }
+                animal.PhotoPath = $"{guid}{extension}";
+            }
+            if (ModelState.ErrorCount > 0)
+            {
+                return View(model);
+            }
             await _context.Animals.AddAsync(animal);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", new { animal.Id });
@@ -123,10 +135,6 @@ namespace WebAnimalPassport.Controllers
             {
                 return Forbid();
             }
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
             Animal? found = await _context.Animals
                 .Include(x => x.User)
                 .FirstOrDefaultAsync(x => x.Id == model.Id);
@@ -138,6 +146,38 @@ namespace WebAnimalPassport.Controllers
             {
                 return Forbid();
             }
+            if (model.File != null)
+            {
+                Guid guid = Guid.NewGuid();
+                string extension = Path.GetExtension(model.File.FileName);
+                string completePath = $"{_env.WebRootPath}/src/Animals/{guid}{extension}";
+                while (System.IO.File.Exists(completePath))
+                {
+                    guid = Guid.NewGuid();
+                    completePath = $"{_env.WebRootPath}/src/Animals/{guid}{extension}";
+                }
+                try
+                {
+                    using (FileStream createStream = new FileStream(completePath, FileMode.Create))
+                    {
+                        await model.File.CopyToAsync(createStream);
+                    }
+                    if (found.PhotoPath != null && System.IO.File.Exists($"{_env.WebRootPath}/src/Animals/{found.PhotoPath}"))
+                    {
+                        System.IO.File.Delete($"{_env.WebRootPath}/src/Animals/{found.PhotoPath}");
+                    }
+                }
+                catch
+                {
+                    ModelState.AddModelError("File", "Ошибка загрузки файла!");
+                }
+                found.PhotoPath = $"{guid}{extension}";
+            }
+            if (ModelState.ErrorCount > 0)
+            {
+                return View(model);
+            }
+
             Animal animal = new Animal(model);
             found.Update(animal);
             _context.Animals.Update(animal);
