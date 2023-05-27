@@ -24,3 +24,8 @@ body {
 .rounded-custom {
     border-radius: 0.6rem !important;
 }
+
+.cell-centered {
+    text-align: center;
+    vertical-align: middle;
+}

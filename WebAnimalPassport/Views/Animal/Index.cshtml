@@ -7,10 +7,11 @@
 @model Animal
 @{
     ViewData["Title"] = $"Питомец - {Model.Name}";
+    bool canModify = SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.User.Id;
 }
 
 <div class="d-flex justify-content-center">
-    <h1 class="border border border-dark rounded py-2">@ViewData["Title"]</h1>
+    <h1 class="border border border-dark rounded p-4">@ViewData["Title"]</h1>
 </div>
 <h1 class="text-center">Владелец питомца</h1>
 <hr>
@@ -134,11 +135,84 @@
         <p>@(Model.TattoDate?.ToString("dd.MM.yyyy") ?? "Не указано")</p>
     </div>
 </div>
-@if (SignInManager.IsSignedIn(User) && UserManager.GetUserId(User) == Model.User.Id)
+<hr>
+<div class="accordion accordion-flush">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-1" aria-controls="collapse-1"><h4 class="p-0 m-0">Вакцинации</h4></button>
+        </h2>
+        <div id="collapse-1" class="accordion-collapse collapse" aria-expanded="false">
+            <div class="accordion-body">
+                <table class="table w-100">
+                    <thead>
+                        <tr class="cell-centered">
+                            @if (canModify)
+                            {
+                                <td>Действия</td>
+                            }
+                            <td class="text-nowrap">№ п/п</td>
+                            <td>Вид вакцины</td>
+                            <td>№ серии</td>
+                            <td>Дата вакцинации</td>
+                            <td>Дейстивительна до</td>
+                            <td>Ветеринарный врач</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Vaccinations.Count; i++)
+                        {
+                            var vaccine = Model.Vaccinations[i];
+                            <tr class="cell-centered">
+                                @if (canModify)
+                                {
+                                    <td><a class="btn btn-sm btn-warning" asp-controller="Vaccination" asp-action="Edit" asp-route-id="@vaccine.Id">Изменить</a></td>
+                                }
+                                <td>@(i + 1)</td>
+                                <td>@vaccine.Type</td>
+                                <td>@vaccine.Series</td>
+                                <td>@vaccine.StartDate.ToString("dd.MM.yyyy")</td>
+                                <td>@vaccine.EndDate.ToString("dd.MM.yyyy")</td>
+                                <td>
+                                    @if (vaccine.Doctor == null)
+                                    {
+                                        @vaccine.DoctorName
+                                    }
+                                    else
+                                    {
+                                        @vaccine.Doctor.Surname @vaccine.Doctor.Name @vaccine.Doctor.Patronymic
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @if (canModify)
+                {
+                    <a class="btn btn-success w-100" asp-controller="Vaccination" asp-action="Create" asp-route-id="@Model.Id">Добавить вакцинацию</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="accordion accordion-flush">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-2" aria-controls="collapse-2"><h4 class="p-0 m-0">Обработки</h4></button>
+        </h2>
+        <div id="collapse-2" class="accordion-collapse collapse" aria-expanded="false">
+            <div class="accordion-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (canModify)
 {
     <h1 class="text-center">Действия</h1>
     <hr>
-    <a class="btn btn-primary w-100" asp-controller="Animal" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
-    <a class="btn btn-dark w-100 my-2" asp-controller="Animal" asp-action="Transmit" asp-route-id="@Model.Id">Передать другому пользователю</a>
-    <a class="btn btn-danger w-100" asp-controller="Animal" asp-action="Death" asp-route-id="@Model.Id">Заявить о смерти</a>
+    <a class="btn btn-warning w-100 mb-1" asp-controller="Animal" asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
+    <a class="btn btn-danger w-100 mb-1" asp-controller="Animal" asp-action="Transmit" asp-route-id="@Model.Id">Передать другому пользователю</a>
+    <a class="btn btn-danger w-100 mb-1" asp-controller="Animal" asp-action="Lost" asp-route-id="@Model.Id">Заявить о потере</a>
+    <a class="btn btn-dark text-danger mb-1 w-100" asp-controller="Animal" asp-action="Death" asp-route-id="@Model.Id">Заявить о смерти</a>
 }

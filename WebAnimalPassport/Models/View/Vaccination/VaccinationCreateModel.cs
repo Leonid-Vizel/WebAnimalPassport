@@ -6,7 +6,10 @@ namespace WebAnimalPassport.Models.View.Vaccination
     public class VaccinationCreateModel : VaccinationBase
     {
         [DisplayName("Фото записи вакцинации (необзязательно)")]
-        public IFormFile File { get; set; }
+        public IFormFile? File { get; set; }
         public long AnimalId { get; set; }
+
+        public VaccinationCreateModel() : base() { }
+        public VaccinationCreateModel(VaccinationBase model) : base(model) { }
     }
 }

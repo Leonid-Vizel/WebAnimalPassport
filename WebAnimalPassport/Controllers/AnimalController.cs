@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 using WebAnimalPassport.Data;
 using WebAnimalPassport.Models.Data;
 using WebAnimalPassport.Models.Data.Animal;
@@ -41,6 +40,10 @@ namespace WebAnimalPassport.Controllers
             Animal? found = await _context.Animals
                 .Include(x => x.User)
                 .Include(x => x.Owners.OrderBy(x=>x.TransmitDate))
+                .Include(x => x.Vaccinations.OrderBy(x => x.StartDate))
+                .ThenInclude(x => x.Doctor)
+                .Include(x => x.Treatments.OrderBy(x => x.DateTime))
+                .ThenInclude(x => x.Doctor)
                 .Include(x => x.InitialUser)
                 .FirstOrDefaultAsync(x => x.Id == id);
             if (found == null)
@@ -137,6 +140,7 @@ namespace WebAnimalPassport.Controllers
             }
             Animal? found = await _context.Animals
                 .Include(x => x.User)
+                .Include(x => x.InitialUser)
                 .FirstOrDefaultAsync(x => x.Id == model.Id);
             if (found == null)
             {
@@ -180,9 +184,9 @@ namespace WebAnimalPassport.Controllers
 
             Animal animal = new Animal(model);
             found.Update(animal);
-            _context.Animals.Update(animal);
+            _context.Animals.Update(found);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index", new { animal.Id });
+            return RedirectToAction("Index", new { found.Id });
         }
         #endregion
         #region Transmit
