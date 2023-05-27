@@ -1,1 +1,62 @@
-﻿@model AnimalBase
+﻿@using WebAnimalPassport.Models.Enums;
+@model AnimalCreateModel
+<div class="mb-1">
+    <label asp-for="Name" class="form-label"></label>
+    <input asp-for="Name" class="form-control">
+    <span asp-validation-for="Name" class="text-danger"></span>
+</div>
+<div class="mb-1">
+    <label asp-for="Type" class="form-label"></label>
+    <select asp-for="Type" class="form-select" asp-items="@Html.GetEnumSelectList<AnimalType>()"></select>
+    <span asp-validation-for="Type" class="text-danger"></span>
+</div>
+<div class="mb-1">
+    <label asp-for="Breed" class="form-label"></label>
+    <input asp-for="Breed" class="form-control">
+    <span asp-validation-for="Breed" class="text-danger"></span>
+</div>
+<div class="mb-1">
+    <label asp-for="Sex" class="form-label"></label>
+    <select asp-for="Sex" class="form-select" asp-items="@Html.GetEnumSelectList<Sex>()"></select>
+    <span asp-validation-for="Sex" class="text-danger"></span>
+</div>
+<div class="mb-1">
+    <label asp-for="BirthDate" class="form-label"></label>
+    <input asp-for="BirthDate" type="date" class="form-control">
+    <span asp-validation-for="BirthDate" class="text-danger"></span>
+</div>
+<div class="mb-1">
+    <label asp-for="Hair" class="form-label"></label>
+    <input asp-for="Hair" class="form-control">
+    <span asp-validation-for="Hair" class="text-danger"></span>
+</div>
+<div class="mb-1">
+    <label asp-for="File" class="form-label"></label>
+    <input asp-for="File" class="form-control">
+    <span asp-validation-for="File" class="text-danger"></span>
+</div>
+<div class="mb-1">
+    <label asp-for="ChipNumber" class="form-label"></label>
+    <input asp-for="ChipNumber" class="form-control">
+    <span asp-validation-for="ChipNumber" class="text-danger"></span>
+</div>
+<div class="mb-1">
+    <label asp-for="ChipDate" class="form-label"></label>
+    <input asp-for="ChipDate" type="date" class="form-control">
+    <span asp-validation-for="ChipDate" class="text-danger"></span>
+</div>
+<div class="mb-1">
+    <label asp-for="ChipLocation" class="form-label"></label>
+    <input asp-for="ChipLocation" class="form-control">
+    <span asp-validation-for="ChipLocation" class="text-danger"></span>
+</div>
+<div class="mb-1">
+    <label asp-for="TattoNumber" class="form-label"></label>
+    <input asp-for="TattoNumber" class="form-control">
+    <span asp-validation-for="TattoNumber" class="text-danger"></span>
+</div>
+<div class="mb-1">
+    <label asp-for="TattoDate" class="form-label"></label>
+    <input asp-for="TattoDate" type="date" class="form-control">
+    <span asp-validation-for="TattoDate" class="text-danger"></span>
+</div>
