@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Org.BouncyCastle.Asn1.BC;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,5 +18,25 @@ namespace WebAnimalPassport.Models.Data.Vaccination
         public DateTime StartDate { get; set; }
         [DisplayName("Действителен до")]
         public DateTime EndDate { get; set; }
+
+        public VaccinationBase() : base() { }
+
+        public VaccinationBase(VaccinationBase model) : this()
+        {
+            Type  = model.Type;
+            Series = model.Series;
+            DoctorName = model.DoctorName;
+            StartDate = model.StartDate;
+            EndDate = model.EndDate;
+        }
+
+        public void Update(VaccinationBase model)
+        {
+            Type = model.Type;
+            Series = model.Series;
+            DoctorName = model.DoctorName;
+            StartDate = model.StartDate;
+            EndDate = model.EndDate;
+        }
     }
 }
