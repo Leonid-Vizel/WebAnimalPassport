@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Crypto.Digests;
 using WebAnimalPassport.Data;
+using WebAnimalPassport.Models.Data.Animal;
 using WebAnimalPassport.Models.Data.Vaccination;
 using WebAnimalPassport.Models.View.Vaccination;
 
@@ -11,84 +10,137 @@ namespace WebAnimalPassport.Controllers
     public class VaccinationController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private IWebHostEnvironment _appEnvironment;
-        public VaccinationController(ApplicationDbContext db, IWebHostEnvironment appEnvironment)
+        private IWebHostEnvironment _env;
+        public VaccinationController(ApplicationDbContext db, IWebHostEnvironment env)
         {
             _context = db;
-            _appEnvironment = appEnvironment;
+            _env = env;
         }
-        public IActionResult Create()
+
+        #region Create
+        public async Task<IActionResult> Create(long id)
         {
-            return View();
-        }
-        public IActionResult Show(long Id)
-        {
-            var vac = _context.Vaccinations.Find(Id);
-            return View(vac);
-        }
-        [HttpPost]
-        public async Task<IActionResult> Create(VaccinationCreateModel VaccinationData)
-        {
-            if (VaccinationData.File != null)
+            if (!await _context.Animals.AnyAsync(x => x.Id == id))
             {
-                // путь к папке Files
-                string path = "/AnimalsPhotos/" + VaccinationData.File.FileName;
-                // сохраняем файл в папку Files в каталоге wwwroot
-                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
-                {
-                    await VaccinationData.File.CopyToAsync(fileStream);
-                }
-                Vaccination vac = new Vaccination
-                {
-                    Doctor = _context.Users.FirstOrDefault(x => $"{x.Name} {x.Surname} {x.Patronymic}" == VaccinationData.DoctorName),
-                    Animal = _context.Animals.FirstOrDefault(x => x.Id == VaccinationData.AnimalId),
-                    PhotoPath = _appEnvironment.WebRootPath + path,
-                    Type = VaccinationData.Type,
-                    Series = VaccinationData.Series,
-                    DoctorName = VaccinationData.DoctorName,
-                    StartDate = VaccinationData.StartDate,
-                    EndDate = VaccinationData.EndDate,
-                };
-                _context.Vaccinations.Add(vac);
-                _context.SaveChanges();
+                return NotFound();
             }
-            return RedirectToAction("Create");
-        }
-        public IActionResult Edit(long Id)
-        {
-            var vac = _context.Vaccinations.Find(Id);
-            return View(vac);
-        }
-        [HttpPost]
-        public async Task<IActionResult> Edit(VaccinationEditModel VaccinationData)
-        {
-            var files = HttpContext.Request.Form.Files;
-            string path = "/AnimalsPhotos/" + VaccinationData.File.FileName;
-            var objFromDb = _context.Vaccinations.AsNoTracking().FirstOrDefault(x => x.Id == VaccinationData.Id);
-            if (System.IO.File.Exists(objFromDb.PhotoPath))
-                System.IO.File.Delete(objFromDb.PhotoPath);
-            if (VaccinationData.File != null)
+            VaccinationCreateModel model = new VaccinationCreateModel()
             {
-                // сохраняем файл в папку Files в каталоге wwwroot
-                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
-                {
-                    await VaccinationData.File.CopyToAsync(fileStream);
-                }
-                Vaccination vac = new Vaccination
-                {
-                    //Doctor = _context.Users.FirstOrDefault(x => $"{x.Name} {x.Surname} {x.Patronymic}" == VaccinationData.DoctorName),
-                    Animal = _context.Animals.FirstOrDefault(x => x.Id == VaccinationData.AnimalId),
-                    PhotoPath = _appEnvironment.WebRootPath + path,
-                    Type = VaccinationData.Type,
-                    Series = VaccinationData.Series,
-                    DoctorName = VaccinationData.DoctorName,
-                    StartDate = VaccinationData.StartDate,
-                    EndDate = VaccinationData.EndDate,
-                };
-                _context.Vaccinations.Add(vac);
-                _context.SaveChanges();
-            }
-            return RedirectToAction("Index");
+                AnimalId = id,
+            };
+            return View(model);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(VaccinationCreateModel model)
+        {
+            if (ModelState.ErrorCount > 0)
+            {
+                return View(model);
+            }
+            Animal? found = await _context.Animals.FindAsync(model.AnimalId);
+            if (found == null)
+            {
+                return NotFound();
+            }
+            Vaccination vaccine = new Vaccination(model);
+            if (model.File != null)
+            {
+                Guid guid = Guid.NewGuid();
+                string extension = Path.GetExtension(model.File.FileName);
+                string completePath = $"{_env.WebRootPath}/src/Vaccinations/{guid}{extension}";
+                while (System.IO.File.Exists(completePath))
+                {
+                    guid = Guid.NewGuid();
+                    completePath = $"{_env.WebRootPath}/src/Vaccinations/{guid}{extension}";
+                }
+                try
+                {
+                    using (FileStream createStream = new FileStream(completePath, FileMode.Create))
+                    {
+                        await model.File.CopyToAsync(createStream);
+                    }
+                }
+                catch
+                {
+                    ModelState.AddModelError("File", "Ошибка загрузки файла!");
+                }
+                vaccine.PhotoPath = $"{guid}{extension}";
+            }
+            vaccine.Animal = found;
+            await _context.Vaccinations.AddAsync(vaccine);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Animal", new { found.Id });
+        }
+        #endregion
+
+        #region Edit
+        public async Task<IActionResult> Edit(long id)
+        {
+            Vaccination? found = await _context.Vaccinations.FindAsync(id);
+            if (found == null)
+            {
+                return NotFound();
+            }
+            VaccinationEditModel model = new VaccinationEditModel(found);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(VaccinationEditModel model)
+        {
+            Vaccination? found = await _context.Vaccinations
+                .Include(x => x.Doctor)
+                .Include(x => x.Animal)
+                .FirstOrDefaultAsync(x => x.Id == model.Id);
+            if (found == null)
+            {
+                return NotFound();
+            }
+            Animal? animal = await _context.Animals.FindAsync(found.Animal.Id);
+            if (animal == null)
+            {
+                return NotFound();
+            }
+            if (model.File != null)
+            {
+                Guid guid = Guid.NewGuid();
+                string extension = Path.GetExtension(model.File.FileName);
+                string completePath = $"{_env.WebRootPath}/src/Vaccinations/{guid}{extension}";
+                while (System.IO.File.Exists(completePath))
+                {
+                    guid = Guid.NewGuid();
+                    completePath = $"{_env.WebRootPath}/src/Vaccinations/{guid}{extension}";
+                }
+                try
+                {
+                    using (FileStream createStream = new FileStream(completePath, FileMode.Create))
+                    {
+                        await model.File.CopyToAsync(createStream);
+                    }
+                    if (found.PhotoPath != null && System.IO.File.Exists($"{_env.WebRootPath}/src/Vaccinations/{found.PhotoPath}"))
+                    {
+                        System.IO.File.Delete($"{_env.WebRootPath}/src/Vaccinations/{found.PhotoPath}");
+                    }
+                }
+                catch
+                {
+                    ModelState.AddModelError("File", "Ошибка загрузки файла!");
+                }
+                found.PhotoPath = $"{guid}{extension}";
+            }
+            if (ModelState.ErrorCount > 0)
+            {
+                return View(model);
+            }
+            Vaccination vaccination = new Vaccination(model);
+            found.Update(vaccination);
+            _context.Vaccinations.Update(found);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Animal", new { animal.Id });
+        }
+        #endregion
     }
 }

@@ -30,6 +30,7 @@
     <Folder Include="Areas\User\Views\Shared\" />
     <Folder Include="Areas\Worker\" />
     <Folder Include="wwwroot\src\Animals\" />
+    <Folder Include="wwwroot\src\Vaccinations\" />
   </ItemGroup>
 
 </Project>

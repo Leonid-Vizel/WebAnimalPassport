@@ -135,7 +135,6 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account
             public string? PhoneNumber { get; set; }
         }
 
-
         public async Task OnGetAsync(string returnUrl = null)
         {
             if (!_roleManager.RoleExistsAsync(Roles.Role_Owner).GetAwaiter().GetResult())
@@ -209,7 +208,8 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
                         //return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                        return RedirectToAction("List", "Animal");
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        return RedirectToPage("/Identity/Account/Manage/Index");
                     }
                     else
                     {

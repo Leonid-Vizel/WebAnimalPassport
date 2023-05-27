@@ -13,6 +13,8 @@ namespace WebAnimalPassport.Models.Data.Animal
         public DateTime? DeathDate { get; set; }
         public string? PhotoPath { get; set; }
         public List<OwnerHistory> Owners { get; set; }
+        public List<Vaccination.Vaccination> Vaccinations { get; set; }
+        public List<Treatment.Treatment> Treatments { get; set; }
 
         public Animal() : base() { }
         public Animal(AnimalBase model) : base(model) { }
