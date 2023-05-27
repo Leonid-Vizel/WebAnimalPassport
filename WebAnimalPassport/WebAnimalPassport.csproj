@@ -39,6 +39,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\src\Animals\" />
     <Folder Include="wwwroot\src\Vaccinations\" />
+    <Folder Include="wwwroot\src\Users\" />
     <Folder Include="wwwroot\src\Treatments\" />
   </ItemGroup>
 
