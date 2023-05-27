@@ -3,14 +3,18 @@
     ViewData["Title"] = "Создание электронного паспорта питомца";
 }
 <h1 class="text-center">@ViewData["Title"]</h1>
-<form method="post">
+<form method="post" enctype='multipart/form-data'>
     <partial name="_AnimalModifyModel" />
     <div class="row">
         <div class="col-6">
-            <a role="button" class="btn btn-dark" asp-controller="Animal" asp-action="List">Назад</a>
+            <a role="button" class="btn btn-dark w-100" asp-controller="Animal" asp-action="List">Назад</a>
         </div>
         <div class="col-6">
-            <button type="submit" class="btn btn-dark">Создать</button>
+            <button type="submit" class="btn btn-success w-100">Создать</button>
         </div>
     </div>
 </form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}
