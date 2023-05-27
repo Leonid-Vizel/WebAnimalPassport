@@ -222,7 +222,7 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
                 await _userManager.UpdateAsync(user);
             }
 
-            if (Input.PhotoPath != null)
+            if (Photo != null)
             {
                 Guid guid = Guid.NewGuid();
                 string extension = Path.GetExtension(Photo.FileName);
@@ -238,12 +238,17 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
                     {
                         await Photo.CopyToAsync(createStream);
                     }
+                    if (user.PhotoPath != null && System.IO.File.Exists($"{_env.WebRootPath}/src/Users/{user.PhotoPath}"))
+                    {
+                        System.IO.File.Delete($"{_env.WebRootPath}/src/Users/{user.PhotoPath}");
+                    }
                 }
                 catch
                 {
                     ModelState.AddModelError("File", "Ошибка загрузки файла!");
                 }
                 user.PhotoPath = $"{guid}{extension}";
+                await _userManager.UpdateAsync(user);
             }
 
             await _signInManager.RefreshSignInAsync(user);
