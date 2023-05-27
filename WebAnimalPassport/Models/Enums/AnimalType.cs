@@ -4,7 +4,7 @@ namespace WebAnimalPassport.Models.Enums
 {
     public enum AnimalType
     {
-        [Display(Name = "Кот/Кошка")]
+        [Display(Name = "Кошка")]
         Cat,
         [Display(Name = "Собака")]
         Dog

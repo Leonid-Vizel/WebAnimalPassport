@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebAnimalPassport.Data;
@@ -11,9 +12,11 @@ using WebAnimalPassport.Data;
 namespace WebAnimalPassport.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230527163144_ValidationMigration")]
+    partial class ValidationMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -264,9 +267,6 @@ namespace WebAnimalPassport.Migrations
                     b.Property<string>("InitialUserId")
                         .HasColumnType("text");
 
-                    b.Property<string>("LostLocation")
-                        .HasColumnType("text");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(1000)
@@ -351,7 +351,7 @@ namespace WebAnimalPassport.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("History");
+                    b.ToTable("OwnerHistory");
                 });
 
             modelBuilder.Entity("WebAnimalPassport.Models.Data.Treatment.Treatment", b =>
