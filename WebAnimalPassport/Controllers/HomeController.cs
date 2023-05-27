@@ -5,7 +5,7 @@ using WebAnimalPassport.Models;
 
 namespace WebAnimalPassport.Controllers
 {
-    public class HomeController : Controller
+    public sealed class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
 

@@ -8,5 +8,8 @@ namespace WebAnimalPassport.Models.View.Treatment
         [DisplayName("Фото (необзязательно)")]
         public IFormFile File { get; set; }
         public long AnimalId { get; set; }
+
+        public TreatmentCreateModel() : base() { }
+        public TreatmentCreateModel(TreatmentBase model) : base(model) { }
     }
 }

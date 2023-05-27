@@ -9,5 +9,9 @@ namespace WebAnimalPassport.Models.Data.Treatment
         public Animal.Animal Animal { get; set; }
         public CustomUser? Doctor { get; set; }
         public string? PhotoPath { get; set; }
+        public bool Valid { get; set; }
+
+        public Treatment() : base() { }
+        public Treatment(TreatmentBase model) : base(model) { }
     }
 }

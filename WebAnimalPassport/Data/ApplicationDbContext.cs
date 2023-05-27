@@ -18,6 +18,7 @@ namespace WebAnimalPassport.Data
         public DbSet<CustomUser> Users { get; set; }
         public DbSet<Animal> Animals { get; set; }
         public DbSet<Note> Notes { get; set; }
+        public DbSet<OwnerHistory> History { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) => base.OnModelCreating(modelBuilder);
     }

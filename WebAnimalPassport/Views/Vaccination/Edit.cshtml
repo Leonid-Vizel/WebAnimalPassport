@@ -1,13 +1,10 @@
 ﻿@model WebAnimalPassport.Models.View.Vaccination.VaccinationEditModel
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Редактирование вакцинации";
 }
 <form method="post" enctype="multipart/form-data">
-    <input asp-for="AnimalId" hidden />
     <div class="form-group row">
-        <h2 class="text-dark pl-3">
-            Редактирование вакцинации
-        </h2>
+        <h2 class="text-dark pl-3">@ViewData["Title"]</h2>
         <partial name="_VaccinationModifyModel" />
     </div>
 </form>

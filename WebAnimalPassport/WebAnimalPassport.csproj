@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\Admin\**" />
+    <Compile Remove="Areas\Worker\**" />
+    <Content Remove="Areas\Admin\**" />
+    <Content Remove="Areas\Worker\**" />
+    <EmbeddedResource Remove="Areas\Admin\**" />
+    <EmbeddedResource Remove="Areas\Worker\**" />
+    <None Remove="Areas\Admin\**" />
+    <None Remove="Areas\Worker\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Abp.MailKit" Version="8.2.0" />
     <PackageReference Include="MailKit" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.5" />
@@ -26,12 +37,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\" />
-    <Folder Include="Areas\User\Views\Shared\" />
-    <Folder Include="Areas\Worker\" />
     <Folder Include="wwwroot\src\Animals\" />
     <Folder Include="wwwroot\src\Vaccinations\" />
     <Folder Include="wwwroot\src\Users\" />
+    <Folder Include="wwwroot\src\Treatments\" />
   </ItemGroup>
 
 </Project>
