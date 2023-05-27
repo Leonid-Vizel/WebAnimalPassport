@@ -24,5 +24,11 @@ namespace WebAnimalPassport.Models.Data
         [DisplayName("Страна")]
         [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
         public string? Country { get; set; }
+        [DisplayName("Адрес")]
+        [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
+        public string? Address { get; set; }
+        [DisplayName("Индекс")]
+        [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
+        public string? Index { get; set; }
     }
 }
