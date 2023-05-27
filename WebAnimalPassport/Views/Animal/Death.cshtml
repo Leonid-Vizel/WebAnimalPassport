@@ -1,6 +1,25 @@
-﻿@{
+﻿@model AnimalDeathModel
+@{
     ViewData["Title"] = "Фиксация смерти животного 😢";
 }
-<div>
-
-</div>
+<h1 class="text-center">@ViewData["Title"]</h1>
+<form method="post">
+    <input asp-for="AnimalId" hidden>
+    <div class="mb-1">
+        <label asp-for="AnimalName" class="form-label"></label>
+        <input asp-for="AnimalName" class="form-control" disabled>
+    </div>
+    <div class="mb-1">
+        <label asp-for="Date" class="form-label"></label>
+        <input asp-for="Date" type="date" class="form-control">
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <a role="button" class="btn btn-dark w-100" asp-controller="Animal" asp-action="Index" asp-route-id="@Model.AnimalId">Назад</a>
+        </div>
+        <div class="col-6">
+            <button type="submit" class="btn btn-danger w-100">Подтвердить</button>
+        </div>
+    </div>
+</form>

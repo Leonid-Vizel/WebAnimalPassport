@@ -19,6 +19,7 @@ namespace WebAnimalPassport.Controllers
             _env = env;
             _userManager = userManager;
         }
+
         #region List
         public async Task<IActionResult> List()
         {
@@ -29,11 +30,22 @@ namespace WebAnimalPassport.Controllers
             }
             List<Animal> list = await _context.Animals
                 .Include(x => x.User)
-                .Where(x => x.User.Id == userId)
+                .Include(x => x.Owners)
+                .ThenInclude(x=>x.User)
+                .Where(x => x.User.Id == userId || x.Owners.Any(x=>x.User.Id == userId))
                 .ToListAsync();
             return View(list);
         }
         #endregion
+
+        #region ListLost
+        public async Task<IActionResult> ListLost()
+        {
+            List<Animal> list = await _context.Animals.Where(x=>x.LostLocation != null && x.DeathDate == null).ToListAsync();
+            return View(list);
+        }
+        #endregion
+
         #region Index
         public async Task<IActionResult> Index(long id)
         {
@@ -53,6 +65,7 @@ namespace WebAnimalPassport.Controllers
             return View(found);
         }
         #endregion
+
         #region Create
         public IActionResult Create()
         {
@@ -107,6 +120,7 @@ namespace WebAnimalPassport.Controllers
             return RedirectToAction("Index", new { animal.Id });
         }
         #endregion
+
         #region Edit
         public async Task<IActionResult> Edit(long id)
         {
@@ -189,6 +203,7 @@ namespace WebAnimalPassport.Controllers
             return RedirectToAction("Index", new { found.Id });
         }
         #endregion
+
         #region Transmit
         public async Task<IActionResult> Transmit(long id)
         {
@@ -229,12 +244,9 @@ namespace WebAnimalPassport.Controllers
             {
                 ModelState.AddModelError("OtherUserId", "Пользотель с этим Id не найден!");
             }
-            if (ModelState.ErrorCount > 0)
-            {
-                return View(model);
-            }
             Animal? found = await _context.Animals
                 .Include(x => x.User)
+                .Include(x => x.InitialUser)
                 .FirstOrDefaultAsync(x => x.Id == model.AnimalId);
             if (found == null)
             {
@@ -244,10 +256,206 @@ namespace WebAnimalPassport.Controllers
             {
                 return Forbid();
             }
+            if (ModelState.ErrorCount > 0)
+            {
+                model.AnimalName = found.Name;
+                return View(model);
+            }
+            OwnerHistory history = new OwnerHistory()
+            {
+                Animal = found,
+                User = found.User,
+                Reason = model.Reason,
+                TransmitDate = DateTime.Now,
+            };
+            found.User = user;
+            _context.Animals.Update(found);
+            await _context.History.AddAsync(history);
+            await _context.SaveChangesAsync();
             return RedirectToAction("List");
         }
         #endregion
+
         #region Death
+        public async Task<IActionResult> Death(long id)
+        {
+            string? userId = _userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return Forbid();
+            }
+            Animal? found = await _context.Animals
+                .Include(x => x.User)
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (found == null)
+            {
+                return NotFound();
+            }
+            if (found.User.Id != userId)
+            {
+                return Forbid();
+            }
+            AnimalDeathModel model = new AnimalDeathModel()
+            {
+                AnimalId = id,
+                AnimalName = found.Name,
+                Date = DateTime.Today
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Death(AnimalDeathModel model)
+        {
+            string? userId = _userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return Forbid();
+            }
+            Animal? found = await _context.Animals
+                .Include(x => x.User)
+                .Include(x => x.InitialUser)
+                .FirstOrDefaultAsync(x => x.Id == model.AnimalId);
+            if (found == null)
+            {
+                return NotFound();
+            }
+            if (found.User.Id != userId)
+            {
+                return Forbid();
+            }
+            if (ModelState.ErrorCount > 0)
+            {
+                model.AnimalName = found.Name;
+                return View(model);
+            }
+            found.LostLocation = null;
+            found.DeathDate = model.Date;
+            _context.Animals.Update(found);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", new { found.Id });
+        }
+        #endregion
+
+        #region Lost
+        public async Task<IActionResult> Lost(long id)
+        {
+            string? userId = _userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return Forbid();
+            }
+            Animal? found = await _context.Animals
+                .Include(x => x.User)
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (found == null)
+            {
+                return NotFound();
+            }
+            if (found.User.Id != userId)
+            {
+                return Forbid();
+            }
+            AnimalLostModel model = new AnimalLostModel()
+            {
+                AnimalId = id,
+                AnimalName = found.Name,
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Lost(AnimalLostModel model)
+        {
+            string? userId = _userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return Forbid();
+            }
+            Animal? found = await _context.Animals
+                .Include(x => x.User)
+                .Include(x => x.InitialUser)
+                .FirstOrDefaultAsync(x => x.Id == model.AnimalId);
+            if (found == null)
+            {
+                return NotFound();
+            }
+            if (found.User.Id != userId)
+            {
+                return Forbid();
+            }
+            if (ModelState.ErrorCount > 0)
+            {
+                model.AnimalName = found.Name;
+                return View(model);
+            }
+            found.LostLocation = model.Location;
+            _context.Animals.Update(found);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", new { found.Id });
+        }
+        #endregion
+
+        #region Found
+        public async Task<IActionResult> Found(long id)
+        {
+            string? userId = _userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return Forbid();
+            }
+            Animal? found = await _context.Animals
+                .Include(x => x.User)
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (found == null)
+            {
+                return NotFound();
+            }
+            if (found.User.Id != userId)
+            {
+                return Forbid();
+            }
+            AnimalFoundModel model = new AnimalFoundModel()
+            {
+                AnimalId = id,
+                AnimalName = found.Name,
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Found(AnimalFoundModel model)
+        {
+            string? userId = _userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return Forbid();
+            }
+            Animal? found = await _context.Animals
+                .Include(x => x.User)
+                .Include(x => x.InitialUser)
+                .FirstOrDefaultAsync(x => x.Id == model.AnimalId);
+            if (found == null)
+            {
+                return NotFound();
+            }
+            if (found.User.Id != userId)
+            {
+                return Forbid();
+            }
+            if (ModelState.ErrorCount > 0)
+            {
+                model.AnimalName = found.Name;
+                return View(model);
+            }
+            found.LostLocation = null;
+            _context.Animals.Update(found);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", new { found.Id });
+        }
         #endregion
     }
 }

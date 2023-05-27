@@ -41,6 +41,7 @@ namespace WebAnimalPassport.Models.Data.Animal
         [DisplayName("Дата рождения")]
         [Required(ErrorMessage = "Укажите дату рождения!")]
         public DateTime BirthDate { get; set; }
+        public string? LostLocation { get; set; }
 
         public AnimalBase() : base() { }
         public AnimalBase(AnimalBase model) : this()
