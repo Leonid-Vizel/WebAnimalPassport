@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Xml.Linq;
 using WebAnimalPassport.Models.Data;
 
 namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
@@ -16,13 +15,16 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<CustomUser> _userManager;
         private readonly SignInManager<CustomUser> _signInManager;
+        private readonly IWebHostEnvironment _env;
 
         public IndexModel(
             UserManager<CustomUser> userManager,
-            SignInManager<CustomUser> signInManager)
+            SignInManager<CustomUser> signInManager,
+            IWebHostEnvironment env)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _env = env;
         }
 
         /// <summary>
@@ -32,6 +34,8 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
         public string Username { get; set; }
 
         public string Id { get; set; }
+
+        public IFormFile Photo { get; set; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -95,6 +99,9 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
             [Required(ErrorMessage = "Укажите город!")]
             [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
             public string City { get; set; }
+
+            [DisplayName("Путь к фото")]
+            public string PhotoPath { get; set; }
         }
 
         private async Task LoadAsync(CustomUser user)
@@ -109,6 +116,7 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
             var name = user.Name;
             var surname = user.Surname;
             var city = user.City;
+            var photoPath = user.PhotoPath;
 
             Username = userName;
             Id = user.Id;
@@ -123,7 +131,8 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
                 Region = region,
                 Name = name,
                 Surname = surname,
-                City = city
+                City = city,
+                PhotoPath = photoPath
             };
         }
 
@@ -139,7 +148,7 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(IFormFile photo)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -213,8 +222,37 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
                 await _userManager.UpdateAsync(user);
             }
 
+            if (Photo != null)
+            {
+                Guid guid = Guid.NewGuid();
+                string extension = Path.GetExtension(Photo.FileName);
+                string completePath = $"{_env.WebRootPath}/src/Users/{guid}{extension}";
+                while (System.IO.File.Exists(completePath))
+                {
+                    guid = Guid.NewGuid();
+                    completePath = $"{_env.WebRootPath}/src/Users/{guid}{extension}";
+                }
+                try
+                {
+                    using (FileStream createStream = new FileStream(completePath, FileMode.Create))
+                    {
+                        await Photo.CopyToAsync(createStream);
+                    }
+                    if (user.PhotoPath != null && System.IO.File.Exists($"{_env.WebRootPath}/src/Users/{user.PhotoPath}"))
+                    {
+                        System.IO.File.Delete($"{_env.WebRootPath}/src/Users/{user.PhotoPath}");
+                    }
+                }
+                catch
+                {
+                    ModelState.AddModelError("File", "Ошибка загрузки файла!");
+                }
+                user.PhotoPath = $"{guid}{extension}";
+                await _userManager.UpdateAsync(user);
+            }
+
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
+            StatusMessage = "Ваш профиль обновлён!";
             return RedirectToPage();
         }
     }
