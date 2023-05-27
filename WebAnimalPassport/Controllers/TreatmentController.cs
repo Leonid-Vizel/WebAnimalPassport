@@ -1,92 +1,146 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAnimalPassport.Data;
+using WebAnimalPassport.Models.Data.Animal;
 using WebAnimalPassport.Models.Data.Treatment;
 using WebAnimalPassport.Models.View.Treatment;
 
 namespace WebAnimalPassport.Controllers
 {
-    public class TreatmentController : Controller
+    public sealed class TreatmentController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private IWebHostEnvironment _appEnvironment;
-        public TreatmentController(ApplicationDbContext db, IWebHostEnvironment appEnvironment)
+        private IWebHostEnvironment _env;
+        public TreatmentController(ApplicationDbContext db, IWebHostEnvironment env)
         {
             _context = db;
-            _appEnvironment = appEnvironment;
+            _env = env;
         }
-        public IActionResult Create()
+
+        #region Create
+        public async Task<IActionResult> Create(long id)
         {
-            return View();
-        }
-        public IActionResult Show(long Id)
-        {
-            var vac = _context.Treatments.Find(Id);
-            return View(vac);
-        }
-        [HttpPost]
-        public async Task<IActionResult> Create(TreatmentCreateModel TreatmentData)
-        {
-            if (TreatmentData.File != null)
+            if (!await _context.Animals.AnyAsync(x => x.Id == id))
             {
-                // путь к папке Files
-                string path = "/TreatmentPhotos/" + Guid.NewGuid().ToString(); ;
-                // сохраняем файл в папку Files в каталоге wwwroot
-                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
-                {
-                    await TreatmentData.File.CopyToAsync(fileStream);
-                }
-                Treatment treatment = new Treatment
-                {
-                    Animal = _context.Animals.Find(TreatmentData.AnimalId),
-                    PhotoPath = _appEnvironment.WebRootPath + path,
-                    DateTime = TreatmentData.DateTime,
-                    TreatmentType = TreatmentData.TreatmentType,
-                    Drug = TreatmentData.Drug,
-                    Doze = TreatmentData.Doze,
-                    DoctorName = TreatmentData.DoctorName,
-                    Doctor = _context.Users.FirstOrDefault(x => $"{x.Name} {x.Surname} {x.Patronymic}" == TreatmentData.DoctorName),
-                };
-                _context.Treatments.Add(treatment);
-                _context.SaveChanges();
+                return NotFound();
             }
-            return RedirectToAction("Create");
-        }
-        public IActionResult Edit(long Id)
-        {
-            var vac = _context.Treatments.Find(Id);
-            return View(vac);
-        }
-        [HttpPost]
-        public async Task<IActionResult> Edit(TreatmentEditModel TreatmentData)
-        {
-            var files = HttpContext.Request.Form.Files;
-            string path = "/TreatmentPhotos/" + Guid.NewGuid().ToString(); ;
-            var objFromDb = _context.Treatments.AsNoTracking().FirstOrDefault(x => x.Id == TreatmentData.Id);
-            if (System.IO.File.Exists(objFromDb.PhotoPath))
-                System.IO.File.Delete(objFromDb.PhotoPath);
-            if (TreatmentData.File != null)
+            TreatmentCreateModel model = new TreatmentCreateModel()
             {
-                // сохраняем файл в папку Files в каталоге wwwroot
-                using (var fileStream = new FileStream(_appEnvironment.WebRootPath + path, FileMode.Create))
-                {
-                    await TreatmentData.File.CopyToAsync(fileStream);
-                }
-                Treatment treatment = new Treatment
-                {
-                    Animal = _context.Animals.Find(TreatmentData.AnimalId),
-                    PhotoPath = _appEnvironment.WebRootPath + path,
-                    DateTime = TreatmentData.DateTime,
-                    TreatmentType = TreatmentData.TreatmentType,
-                    Drug = TreatmentData.Drug,
-                    Doze = TreatmentData.Doze,
-                    DoctorName = TreatmentData.DoctorName,
-                    Doctor = _context.Users.FirstOrDefault(x => $"{x.Name} {x.Surname} {x.Patronymic}" == TreatmentData.DoctorName),
-                };
-                _context.Treatments.Add(treatment);
-                _context.SaveChanges();
-            }
-            return RedirectToAction("Index");
+                AnimalId = id,
+            };
+            return View(model);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(TreatmentCreateModel model)
+        {
+            Animal? found = await _context.Animals.FindAsync(model.AnimalId);
+            if (found == null)
+            {
+                return NotFound();
+            }
+            Treatment treatment = new Treatment(model);
+            if (model.File != null)
+            {
+                Guid guid = Guid.NewGuid();
+                string extension = Path.GetExtension(model.File.FileName);
+                string completePath = $"{_env.WebRootPath}/src/Treatments/{guid}{extension}";
+                while (System.IO.File.Exists(completePath))
+                {
+                    guid = Guid.NewGuid();
+                    completePath = $"{_env.WebRootPath}/src/Treatments/{guid}{extension}";
+                }
+                try
+                {
+                    using (FileStream createStream = new FileStream(completePath, FileMode.Create))
+                    {
+                        await model.File.CopyToAsync(createStream);
+                    }
+                }
+                catch
+                {
+                    ModelState.AddModelError("File", "Ошибка загрузки файла!");
+                }
+                treatment.PhotoPath = $"{guid}{extension}";
+            }
+            if (ModelState.ErrorCount > 0)
+            {
+                return View(model);
+            }
+            treatment.Animal = found;
+            await _context.Treatments.AddAsync(treatment);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Animal", new { found.Id });
+        }
+        #endregion
+
+        #region Edit
+        public async Task<IActionResult> Edit(long id)
+        {
+            Treatment? found = await _context.Treatments.FindAsync(id);
+            if (found == null)
+            {
+                return NotFound();
+            }
+            TreatmentEditModel model = new TreatmentEditModel(found);
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(TreatmentEditModel model)
+        {
+            Treatment? found = await _context.Treatments
+                .Include(x => x.Doctor)
+                .Include(x => x.Animal)
+                .FirstOrDefaultAsync(x => x.Id == model.Id);
+            if (found == null)
+            {
+                return NotFound();
+            }
+            Treatment? animal = await _context.Treatments.FindAsync(found.Animal.Id);
+            if (animal == null)
+            {
+                return NotFound();
+            }
+            if (model.File != null)
+            {
+                Guid guid = Guid.NewGuid();
+                string extension = Path.GetExtension(model.File.FileName);
+                string completePath = $"{_env.WebRootPath}/src/Treatments/{guid}{extension}";
+                while (System.IO.File.Exists(completePath))
+                {
+                    guid = Guid.NewGuid();
+                    completePath = $"{_env.WebRootPath}/src/Treatments/{guid}{extension}";
+                }
+                try
+                {
+                    using (FileStream createStream = new FileStream(completePath, FileMode.Create))
+                    {
+                        await model.File.CopyToAsync(createStream);
+                    }
+                    if (found.PhotoPath != null && System.IO.File.Exists($"{_env.WebRootPath}/src/Treatments/{found.PhotoPath}"))
+                    {
+                        System.IO.File.Delete($"{_env.WebRootPath}/src/Treatments/{found.PhotoPath}");
+                    }
+                }
+                catch
+                {
+                    ModelState.AddModelError("File", "Ошибка загрузки файла!");
+                }
+                found.PhotoPath = $"{guid}{extension}";
+            }
+            if (ModelState.ErrorCount > 0)
+            {
+                return View(model);
+            }
+            Treatment treatment = new Treatment(model);
+            found.Update(treatment);
+            _context.Treatments.Update(found);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index", "Animal", new { animal.Id });
+        }
+        #endregion
     }
 }
