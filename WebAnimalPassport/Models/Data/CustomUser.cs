@@ -40,5 +40,8 @@ namespace WebAnimalPassport.Models.Data
         [DisplayName("Индекс")]
         [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
         public string? Index { get; set; }
+
+        [DisplayName("Фото")]
+        public string? PhotoPath { get; set; }
     }
 }

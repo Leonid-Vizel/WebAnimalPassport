@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Xml.Linq;
 using WebAnimalPassport.Models.Data;
 
 namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
@@ -30,11 +31,7 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public string Username { get; set; }
 
-        public string Name { get; set; }
-
-        public string Surname { get; set; }
-
-        public string City { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -83,6 +80,21 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
             [DisplayName("Индекс")]
             [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
             public string Index { get; set; }
+
+            [DisplayName("Имя")]
+            [Required(ErrorMessage = "Укажите имя!")]
+            [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
+            public string Name { get; set; }
+
+            [DisplayName("Фамилия")]
+            [Required(ErrorMessage = "Укажите фамилию!")]
+            [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
+            public string Surname { get; set; }
+
+            [DisplayName("Город")]
+            [Required(ErrorMessage = "Укажите город!")]
+            [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
+            public string City { get; set; }
         }
 
         private async Task LoadAsync(CustomUser user)
@@ -94,11 +106,12 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
             var country = user.Country;
             var address = user.Address;
             var index = user.Index;
+            var name = user.Name;
+            var surname = user.Surname;
+            var city = user.City;
 
             Username = userName;
-            Name = user.Name;
-            Surname = user.Surname;
-            City = user.City;
+            Id = user.Id;
 
             Input = new InputModel
             {
@@ -107,7 +120,10 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
                 Address = address,
                 Index = index,
                 Country = country,
-                Region = region
+                Region = region,
+                Name = name,
+                Surname = surname,
+                City = city
             };
         }
 
@@ -153,6 +169,9 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
             var country = user.Country;
             var address = user.Address;
             var index = user.Index;
+            var name = user.Name;
+            var surname = user.Surname;
+            var city = user.City;
             if (Input.Patronymic != patronymic)
             {
                 user.Patronymic = Input.Patronymic;
@@ -176,6 +195,21 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account.Manage
             if (Input.Region != region)
             {
                 user.Region = Input.Region;
+                await _userManager.UpdateAsync(user);
+            }
+            if (Input.Name != name)
+            {
+                user.Name = Input.Name;
+                await _userManager.UpdateAsync(user);
+            }
+            if (Input.Surname != surname)
+            {
+                user.Surname = Input.Surname;
+                await _userManager.UpdateAsync(user);
+            }
+            if (Input.City != city)
+            {
+                user.City = Input.City;
                 await _userManager.UpdateAsync(user);
             }
 
