@@ -1,0 +1,30 @@
+﻿@model AnimalTransmitModel
+@{
+    ViewData["Title"] = "Передача питомца";
+}
+<h1 class="text-center">@ViewData["Title"]</h1>
+<form method="post">
+    <input asp-for="AnimalId" hidden>
+    <div class="mb-1">
+        <label asp-for="AnimalName" class="form-label"></label>
+        <input asp-for="AnimalName" class="form-control" disabled>
+    </div>
+    <div class="mb-1">
+        <label asp-for="OtherUserId" class="form-label"></label>
+        <input asp-for="OtherUserId" class="form-control">
+        <span asp-validation-for="OtherUserId" class="text-danger"></span>
+    </div>
+    <div class="mb-1">
+        <label asp-for="Reason" class="form-label"></label>
+        <textarea asp-for="Reason" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="Reason" class="text-danger"></span>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <a role="button" class="btn btn-dark" asp-controller="Animal" asp-action="Index" asp-route-id="@Model.AnimalId">Назад</a>
+        </div>
+        <div class="col-6">
+            <button type="submit" class="btn btn-dark">Передать</button>
+        </div>
+    </div>
+</form>

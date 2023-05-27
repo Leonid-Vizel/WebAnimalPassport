@@ -14,7 +14,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql
 
 builder.Services.AddIdentity<CustomUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 builder.Services.AddRazorPages();
-builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
