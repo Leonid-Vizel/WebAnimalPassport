@@ -20,6 +20,43 @@
                 <label asp-for="Input.PhoneNumber" class="form-label"></label>
                 <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
             </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Surname" class="form-control" placeholder="Please choose your username." disabled />
+                <label asp-for="Surname" class="form-label">Фамилия - Surname</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Name" class="form-control" placeholder="Please choose your username." disabled />
+                <label asp-for="Name" class="form-label">Имя - Name</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Patronymic" class="form-control" placeholder="text"/>
+                <label asp-for="Input.Patronymic">Отчество</label>
+                <span asp-validation-for="Input.Patronymic" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Address" class="form-control" placeholder="text"/>
+                <label asp-for="Input.Address">Адрес - Address</label>
+                <span asp-validation-for="Input.Address" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Index" class="form-control" placeholder="text"/>
+                <label asp-for="Input.Index">Индекс - Post-code</label>
+                <span asp-validation-for="Input.Index" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="City" class="form-control" placeholder="Please choose your username." disabled />
+                <label asp-for="City" class="form-label">Город - City</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Region" class="form-control" placeholder="text"/>
+                <label asp-for="Input.Region">Регион - Region</label>
+                <span asp-validation-for="Input.Region" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Country" class="form-control" placeholder="text"/>
+                <label asp-for="Input.Country">Страна - Country</label>
+                <span asp-validation-for="Input.Country" class="text-danger"></span>
+            </div>
             <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
         </form>
     </div>
