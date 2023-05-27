@@ -54,6 +54,11 @@
                 <span asp-validation-for="Input.City" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
+                <input asp-for="Input.Region" class="form-control" aria-required="true" placeholder="text"/>
+                <label asp-for="Input.Region">Регион - Region</label>
+                <span asp-validation-for="Input.Region" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
                 <input asp-for="Input.Country" class="form-control" aria-required="true" placeholder="text"/>
                 <label asp-for="Input.Country">Страна - Country</label>
                 <span asp-validation-for="Input.Country" class="text-danger"></span>

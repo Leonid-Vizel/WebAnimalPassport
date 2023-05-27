@@ -118,6 +118,9 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account
             [Required(ErrorMessage = "Укажите город!")]
             [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
             public string City { get; set; }
+            [DisplayName("Регион")]
+            [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
+            public string? Region { get; set; }
             [DisplayName("Страна")]
             [MaxLength(1000, ErrorMessage = "Максимальная длина - 1000 символов!")]
             public string? Country { get; set; }
@@ -170,6 +173,7 @@ namespace WebAnimalPassport.Areas.Identity.Pages.Account
                 user.Surname = Input.Surname;
                 user.Patronymic = Input.Patronymic;
                 user.City = Input.City;
+                user.Region = Input.Region;
                 user.Country = Input.Country;
                 user.Address = Input.Address;
                 user.PhoneNumber = Input.PhoneNumber;

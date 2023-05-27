@@ -12,7 +12,7 @@ using WebAnimalPassport.Data;
 namespace WebAnimalPassport.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230526191954_Initial")]
+    [Migration("20230527135251_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -237,13 +237,16 @@ namespace WebAnimalPassport.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("Breed")
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
                     b.Property<DateTime?>("ChipDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("ChipLocation")
                         .HasMaxLength(1000)
@@ -254,12 +257,15 @@ namespace WebAnimalPassport.Migrations
                         .HasColumnType("character varying(1000)");
 
                     b.Property<DateTime?>("DeathDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Hair")
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("InitialUserId")
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -272,29 +278,80 @@ namespace WebAnimalPassport.Migrations
                     b.Property<int>("Sex")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Species")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
                     b.Property<DateTime?>("TattoDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("TattoNumber")
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("UserId1")
+                    b.Property<string>("UserId")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("InitialUserId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Animals");
+                });
+
+            modelBuilder.Entity("WebAnimalPassport.Models.Data.Note.Note", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("AnimalId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(30000)
+                        .HasColumnType("character varying(30000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimalId");
+
+                    b.ToTable("Notes");
+                });
+
+            modelBuilder.Entity("WebAnimalPassport.Models.Data.OwnerHistory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("AnimalId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(10000)
+                        .HasColumnType("character varying(10000)");
+
+                    b.Property<DateTime>("TransmitDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimalId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OwnerHistory");
                 });
 
             modelBuilder.Entity("WebAnimalPassport.Models.Data.Treatment.Treatment", b =>
@@ -305,13 +362,38 @@ namespace WebAnimalPassport.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<long>("AnimalId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime>("DateTime")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("DoctorId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DoctorName")
+                        .HasMaxLength(10000)
+                        .HasColumnType("character varying(10000)");
+
+                    b.Property<double?>("Doze")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Drug")
+                        .HasMaxLength(10000)
+                        .HasColumnType("character varying(10000)");
 
                     b.Property<string>("PhotoPath")
                         .HasColumnType("text");
 
+                    b.Property<string>("TreatmentType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("AnimalId");
+
+                    b.HasIndex("DoctorId");
 
                     b.ToTable("Treatments");
                 });
@@ -327,12 +409,34 @@ namespace WebAnimalPassport.Migrations
                     b.Property<long>("AnimalId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("DoctorId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DoctorName")
+                        .HasMaxLength(10000)
+                        .HasColumnType("character varying(10000)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<string>("PhotoPath")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Series")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AnimalId");
+
+                    b.HasIndex("DoctorId");
 
                     b.ToTable("Vaccinations");
                 });
@@ -340,6 +444,10 @@ namespace WebAnimalPassport.Migrations
             modelBuilder.Entity("WebAnimalPassport.Models.Data.CustomUser", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -350,12 +458,20 @@ namespace WebAnimalPassport.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
+                    b.Property<string>("Index")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
                     b.Property<string>("Patronymic")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("Region")
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
@@ -420,11 +536,62 @@ namespace WebAnimalPassport.Migrations
 
             modelBuilder.Entity("WebAnimalPassport.Models.Data.Animal.Animal", b =>
                 {
+                    b.HasOne("WebAnimalPassport.Models.Data.CustomUser", "InitialUser")
+                        .WithMany()
+                        .HasForeignKey("InitialUserId");
+
                     b.HasOne("WebAnimalPassport.Models.Data.CustomUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("InitialUser");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebAnimalPassport.Models.Data.Note.Note", b =>
+                {
+                    b.HasOne("WebAnimalPassport.Models.Data.Animal.Animal", "Animal")
+                        .WithMany()
+                        .HasForeignKey("AnimalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Animal");
+                });
+
+            modelBuilder.Entity("WebAnimalPassport.Models.Data.OwnerHistory", b =>
+                {
+                    b.HasOne("WebAnimalPassport.Models.Data.Animal.Animal", "Animal")
+                        .WithMany("Owners")
+                        .HasForeignKey("AnimalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebAnimalPassport.Models.Data.CustomUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Animal");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebAnimalPassport.Models.Data.Treatment.Treatment", b =>
+                {
+                    b.HasOne("WebAnimalPassport.Models.Data.Animal.Animal", "Animal")
+                        .WithMany()
+                        .HasForeignKey("AnimalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebAnimalPassport.Models.Data.CustomUser", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId");
+
+                    b.Navigation("Animal");
+
+                    b.Navigation("Doctor");
                 });
 
             modelBuilder.Entity("WebAnimalPassport.Models.Data.Vaccination.Vaccination", b =>
@@ -435,7 +602,18 @@ namespace WebAnimalPassport.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WebAnimalPassport.Models.Data.CustomUser", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorId");
+
                     b.Navigation("Animal");
+
+                    b.Navigation("Doctor");
+                });
+
+            modelBuilder.Entity("WebAnimalPassport.Models.Data.Animal.Animal", b =>
+                {
+                    b.Navigation("Owners");
                 });
 #pragma warning restore 612, 618
         }

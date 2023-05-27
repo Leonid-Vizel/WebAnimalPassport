@@ -235,7 +235,7 @@ namespace WebAnimalPassport.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("BirthDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Breed")
                         .IsRequired()
@@ -243,7 +243,7 @@ namespace WebAnimalPassport.Migrations
                         .HasColumnType("character varying(1000)");
 
                     b.Property<DateTime?>("ChipDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("ChipLocation")
                         .HasMaxLength(1000)
@@ -254,7 +254,7 @@ namespace WebAnimalPassport.Migrations
                         .HasColumnType("character varying(1000)");
 
                     b.Property<DateTime?>("DeathDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Hair")
                         .IsRequired()
@@ -276,7 +276,7 @@ namespace WebAnimalPassport.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime?>("TattoDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("TattoNumber")
                         .HasMaxLength(1000)
@@ -337,7 +337,7 @@ namespace WebAnimalPassport.Migrations
                         .HasColumnType("character varying(10000)");
 
                     b.Property<DateTime>("TransmitDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("UserId")
                         .HasColumnType("text");
@@ -363,7 +363,7 @@ namespace WebAnimalPassport.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("DateTime")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("DoctorId")
                         .HasColumnType("text");
@@ -414,7 +414,7 @@ namespace WebAnimalPassport.Migrations
                         .HasColumnType("character varying(10000)");
 
                     b.Property<DateTime>("EndDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("PhotoPath")
                         .HasColumnType("text");
@@ -423,7 +423,7 @@ namespace WebAnimalPassport.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -465,6 +465,10 @@ namespace WebAnimalPassport.Migrations
                         .HasColumnType("character varying(1000)");
 
                     b.Property<string>("Patronymic")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("Region")
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
