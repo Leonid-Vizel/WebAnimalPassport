@@ -7,7 +7,7 @@ using WebAnimalPassport.Models.View.Vaccination;
 
 namespace WebAnimalPassport.Controllers
 {
-    public class VaccinationController : Controller
+    public sealed class VaccinationController : Controller
     {
         private readonly ApplicationDbContext _context;
         private IWebHostEnvironment _env;
@@ -35,10 +35,6 @@ namespace WebAnimalPassport.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(VaccinationCreateModel model)
         {
-            if (ModelState.ErrorCount > 0)
-            {
-                return View(model);
-            }
             Animal? found = await _context.Animals.FindAsync(model.AnimalId);
             if (found == null)
             {
@@ -67,6 +63,10 @@ namespace WebAnimalPassport.Controllers
                     ModelState.AddModelError("File", "Ошибка загрузки файла!");
                 }
                 vaccine.PhotoPath = $"{guid}{extension}";
+            }
+            if (ModelState.ErrorCount > 0)
+            {
+                return View(model);
             }
             vaccine.Animal = found;
             await _context.Vaccinations.AddAsync(vaccine);

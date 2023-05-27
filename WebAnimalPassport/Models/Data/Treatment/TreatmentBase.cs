@@ -15,9 +15,34 @@ namespace WebAnimalPassport.Models.Data.Treatment
         [MaxLength(10000, ErrorMessage = "Максимальный размер - 10000")]
         public string? Drug { get; set; }
         [DisplayName("Доза (Если применимо)")]
-        public double? Doze { get; set; }
+        [MaxLength(100, ErrorMessage = "Максимальный размер - 100")]
+        public string? Doze { get; set; }
+        [DisplayName("Номер серии")]
+        [MaxLength(100, ErrorMessage = "Максимальный размер - 100")]
+        public string? BatchNumber { get; set; }
         [DisplayName("ФИО ветеринарного врача")]
         [MaxLength(10000, ErrorMessage = "Максимальная длина - 10000 символов!")]
         public string? DoctorName { get; set; }
+
+        public TreatmentBase() : base() { }
+        public TreatmentBase(TreatmentBase model) : this()
+        {
+            DateTime = model.DateTime;
+            BatchNumber = model.BatchNumber;
+            TreatmentType = model.TreatmentType;
+            Drug = model.Drug;
+            Doze = model.Doze;
+            DoctorName = model.DoctorName;
+        }
+
+        public void Update(TreatmentBase model)
+        {
+            DateTime = model.DateTime;
+            BatchNumber = model.BatchNumber;
+            TreatmentType = model.TreatmentType;
+            Drug = model.Drug;
+            Doze = model.Doze;
+            DoctorName = model.DoctorName;
+        }
     }
 }

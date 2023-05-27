@@ -9,6 +9,7 @@ namespace WebAnimalPassport.Models.Data.Vaccination
         public Animal.Animal Animal { get; set; }
         public CustomUser? Doctor { get; set; }
         public string? PhotoPath { get; set; }
+        public bool Valid { get; set; }
 
         public Vaccination() : base() { }
 

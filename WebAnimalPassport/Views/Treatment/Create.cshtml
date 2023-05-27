@@ -1,92 +1,15 @@
 ﻿@model WebAnimalPassport.Models.View.Treatment.TreatmentCreateModel
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Добавление обработки от паразитов";
 }
 <form method="post" asp-action="Create" enctype="multipart/form-data">
     <input asp-for="AnimalId" hidden />
     <div class="form-group row">
-        <h2 class="text-dark pl-3">
-            Добавление обработки от паразитов
-        </h2>
-        <div class="row">
-            <div class="col-8">
-                <div class="form-group row">
-                    <div class="col-4 my-1">
-                        <label asp-for="File"></label>
-                    </div>
-                    <div class="col-8 my-1">
-                        <input type="file" name="File" id="uploadBox" multiple class="form-control" />
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-4 my-1">
-                        <label asp-for="DateTime"></label>
-                    </div>
-                    <div class="col-8 my-1">
-                        <input asp-for="DateTime" class="form-control" />
-                        <span asp-validation-for="DateTime" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-4 my-1">
-                        <label asp-for="TreatmentType"></label>
-                    </div>
-                    <div class="col-8 my-1">
-                        <input asp-for="TreatmentType" class="form-control" />
-                        <span asp-validation-for="TreatmentType" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-4 my-1">
-                        <label asp-for="Drug"></label>
-                    </div>
-                    <div class="col-8 my-1">
-                        <input asp-for="Drug" class="form-control" />
-                        <span asp-validation-for="Drug" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-4 my-1">
-                        <label asp-for="Doze"></label>
-                    </div>
-                    <div class="col-8 my-1">
-                        <input asp-for="Doze" class="form-control" />
-                        <span asp-validation-for="Doze" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-4 my-1">
-                        <label asp-for="DoctorName"></label>
-                    </div>
-                    <div class="col-8 my-1">
-                        <input asp-for="DoctorName" class="form-control" />
-                        <span asp-validation-for="DoctorName" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-8">
-                <div class="form-group row offset-4">
-                    <div class="col-6 pt-2">
-                        <button type="submit" class="btn btn-dark w-100 pt-1">
-                            <i class="fa-solid fa-floppy-disk" style="color: #ffffff;"></i>
-                            Save
-                        </button>
-                    </div>
-                    <div class="col-6 pt-2">
-                        <a asp-action="Index" class="btn btn-dark w-100 pt-1">
-                            <i class="fa-solid fa-arrow-left" style="color: #ffffff;"></i>
-                            Back
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <h2 class="text-dark pl-3">@ViewData["Title"]</h2>
+        <partial name="_TreatmentModifyModel" />
     </div>
-
 </form>
-@section Scripts{
-    @{
-        <partial name="_ValidationScriptsPartial" />
-    }
-}
 
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

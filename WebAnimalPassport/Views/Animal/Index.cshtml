@@ -151,11 +151,11 @@
                                 <td>Действия</td>
                             }
                             <td class="text-nowrap">№ п/п</td>
-                            <td>Вид вакцины</td>
-                            <td>№ серии</td>
-                            <td>Дата вакцинации</td>
-                            <td>Дейстивительна до</td>
-                            <td>Ветеринарный врач</td>
+                            <td>Вид вакцины - Type of vaccine</td>
+                            <td>№ серии - Batch number</td>
+                            <td>Дата вакцинации - Date of vaccination</td>
+                            <td>Дейстивительна до - Valid until</td>
+                            <td>Ветеринарный врач - Veterinarian</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -165,7 +165,7 @@
                             <tr class="cell-centered">
                                 @if (canModify)
                                 {
-                                    <td><a class="btn btn-sm btn-warning" asp-controller="Vaccination" asp-action="Edit" asp-route-id="@vaccine.Id">Изменить</a></td>
+                                    <td><a class="btn btn-sm btn-warning" asp-controller="Vaccination" asp-action="Edit" asp-route-id="@vaccine.Id"><i class="bi bi-pencil-fill"></i></a></td>
                                 }
                                 <td>@(i + 1)</td>
                                 <td>@vaccine.Type</td>
@@ -188,7 +188,7 @@
                 </table>
                 @if (canModify)
                 {
-                    <a class="btn btn-success w-100" asp-controller="Vaccination" asp-action="Create" asp-route-id="@Model.Id">Добавить вакцинацию</a>
+                    <a class="btn btn-success w-100" asp-controller="Vaccination" asp-action="Create" asp-route-id="@Model.Id"><i class="bi bi-plus-lg"></i></a>
                 }
             </div>
         </div>
@@ -202,6 +202,55 @@
         </h2>
         <div id="collapse-2" class="accordion-collapse collapse" aria-expanded="false">
             <div class="accordion-body">
+                <table class="table w-100">
+                    <thead>
+                        <tr class="cell-centered">
+                            @if (canModify)
+                            {
+                                <td>Действия</td>
+                            }
+                            <td class="text-nowrap">№ п/п</td>
+                            <td>Тип обработки - Type</td>
+                            <td>Производитель и название препарата - Manufacturer and name of product</td>
+                            <td>Номер серии - Batch number</td>
+                            <td>Дата - Date</td>
+                            <td>Время - Time</td>
+                            <td>Ветеринарный врач - Veterinarian</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Treatments.Count; i++)
+                        {
+                            var treatment = Model.Treatments[i];
+                            <tr class="cell-centered">
+                                @if (canModify)
+                                {
+                                    <td><a class="btn btn-sm btn-warning" asp-controller="Treatment" asp-action="Edit" asp-route-id="@treatment.Id"><i class="bi bi-pencil-fill"></i></a></td>
+                                }
+                                <td>@(i + 1)</td>
+                                <td>@treatment.TreatmentType</td>
+                                <td>@treatment.Drug @treatment.Doze</td>
+                                <td>@treatment.BatchNumber</td>
+                                <td>@treatment.DateTime.ToString("dd.MM.yyyy")</td>
+                                <td>@treatment.DateTime.ToString("HH:mm")</td>
+                                <td>
+                                    @if (treatment.Doctor == null)
+                                    {
+                                        @treatment.DoctorName
+                                    }
+                                    else
+                                    {
+                                        @treatment.Doctor.Surname @treatment.Doctor.Name @treatment.Doctor.Patronymic
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @if (canModify)
+                {
+                    <a class="btn btn-success w-100" asp-controller="Treatment" asp-action="Create" asp-route-id="@Model.Id"><i class="bi bi-plus-lg"></i></a>
+                }
             </div>
         </div>
     </div>
