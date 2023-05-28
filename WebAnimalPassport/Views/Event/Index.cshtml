@@ -32,11 +32,9 @@
             }
             @if (Model.User.Email != null)
             {
-                <h5>Телефон - Email</h5>
+                <h5>Почта - Email</h5>
                 <p>@Model.User.Email</p>
             }
-            <h5>Почта - Mail</h5>
-            <p>@Model.User.Surname @Model.User.Name @Model.User.Patronymic</p>
             <h5>Даты проведения - Dates</h5>
             <p>@Model.DateStart.ToString("D") - @Model.DateFinish.ToString("D")</p>
             <h5>Место проведения - Location</h5>

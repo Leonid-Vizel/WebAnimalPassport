@@ -35,6 +35,10 @@
                     }
                 </a>
                 <h3 class="text-center mt-auto">@animal.Name</h3>
+                @if (animal.LostLocation != null)
+                {
+                    <h3 class="text-center text-danger">Пропавший</h3>
+                }
             </div>
         </div>
     }
