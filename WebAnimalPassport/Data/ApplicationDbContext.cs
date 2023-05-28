@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebAnimalPassport.Models.Data;
 using WebAnimalPassport.Models.Data.Animal;
+using WebAnimalPassport.Models.Data.Event;
 using WebAnimalPassport.Models.Data.Note;
 using WebAnimalPassport.Models.Data.Treatment;
 using WebAnimalPassport.Models.Data.Vaccination;
@@ -19,6 +20,7 @@ namespace WebAnimalPassport.Data
         public DbSet<Animal> Animals { get; set; }
         public DbSet<Note> Notes { get; set; }
         public DbSet<OwnerHistory> History { get; set; }
+        public DbSet<Event> Events { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) => base.OnModelCreating(modelBuilder);
     }
