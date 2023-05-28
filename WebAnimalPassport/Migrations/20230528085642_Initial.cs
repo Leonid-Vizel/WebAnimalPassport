@@ -27,40 +27,6 @@ namespace WebAnimalPassport.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    Discriminator = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    Surname = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    Patronymic = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    City = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    Region = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    Country = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    Address = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    Index = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    PasswordHash = table.Column<string>(type: "text", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -101,106 +67,12 @@ namespace WebAnimalPassport.Migrations
                     ChipLocation = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     TattoNumber = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     TattoDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    BirthDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                    BirthDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    LostLocation = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Animals", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Animals_AspNetUsers_InitialUserId",
-                        column: x => x.InitialUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Animals_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserClaims",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    ClaimType = table.Column<string>(type: "text", nullable: true),
-                    ClaimValue = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserLogins",
-                columns: table => new
-                {
-                    LoginProvider = table.Column<string>(type: "text", nullable: false),
-                    ProviderKey = table.Column<string>(type: "text", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserRoles",
-                columns: table => new
-                {
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    RoleId = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserTokens",
-                columns: table => new
-                {
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    LoginProvider = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Value = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -224,7 +96,162 @@ namespace WebAnimalPassport.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OwnerHistory",
+                name: "AspNetUserClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: true),
+                    ClaimValue = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserLogins",
+                columns: table => new
+                {
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    ProviderKey = table.Column<string>(type: "text", nullable: false),
+                    ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    RoleId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Discriminator = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    Surname = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    Patronymic = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    City = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    Region = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    Country = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    Address = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    Index = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    PhotoPath = table.Column<string>(type: "text", nullable: true),
+                    EventId = table.Column<long>(type: "bigint", nullable: true),
+                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserTokens",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    LoginProvider = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Value = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: true),
+                    PhotoPath = table.Column<string>(type: "text", nullable: true),
+                    Name = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    DateStart = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    DateFinish = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Events_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Examinations",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AnimalId = table.Column<long>(type: "bigint", nullable: false),
+                    DoctorId = table.Column<string>(type: "text", nullable: true),
+                    PhotoPath = table.Column<string>(type: "text", nullable: true),
+                    Declaration = table.Column<string>(type: "text", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    DoctorName = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Examinations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Examinations_Animals_AnimalId",
+                        column: x => x.AnimalId,
+                        principalTable: "Animals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Examinations_AspNetUsers_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "History",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -236,15 +263,15 @@ namespace WebAnimalPassport.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OwnerHistory", x => x.Id);
+                    table.PrimaryKey("PK_History", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OwnerHistory_Animals_AnimalId",
+                        name: "FK_History_Animals_AnimalId",
                         column: x => x.AnimalId,
                         principalTable: "Animals",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_OwnerHistory_AspNetUsers_UserId",
+                        name: "FK_History_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
@@ -259,10 +286,12 @@ namespace WebAnimalPassport.Migrations
                     AnimalId = table.Column<long>(type: "bigint", nullable: false),
                     DoctorId = table.Column<string>(type: "text", nullable: true),
                     PhotoPath = table.Column<string>(type: "text", nullable: true),
+                    Valid = table.Column<bool>(type: "boolean", nullable: false),
                     DateTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     TreatmentType = table.Column<string>(type: "text", nullable: false),
                     Drug = table.Column<string>(type: "character varying(10000)", maxLength: 10000, nullable: true),
-                    Doze = table.Column<double>(type: "double precision", nullable: true),
+                    Doze = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    BatchNumber = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     DoctorName = table.Column<string>(type: "character varying(10000)", maxLength: 10000, nullable: true)
                 },
                 constraints: table =>
@@ -290,6 +319,7 @@ namespace WebAnimalPassport.Migrations
                     AnimalId = table.Column<long>(type: "bigint", nullable: false),
                     DoctorId = table.Column<string>(type: "text", nullable: true),
                     PhotoPath = table.Column<string>(type: "text", nullable: true),
+                    Valid = table.Column<bool>(type: "boolean", nullable: false),
                     Type = table.Column<string>(type: "text", nullable: false),
                     Series = table.Column<string>(type: "text", nullable: true),
                     DoctorName = table.Column<string>(type: "character varying(10000)", maxLength: 10000, nullable: true),
@@ -354,25 +384,45 @@ namespace WebAnimalPassport.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_EventId",
+                table: "AspNetUsers",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Events_UserId",
+                table: "Events",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Examinations_AnimalId",
+                table: "Examinations",
+                column: "AnimalId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Examinations_DoctorId",
+                table: "Examinations",
+                column: "DoctorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_History_AnimalId",
+                table: "History",
+                column: "AnimalId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_History_UserId",
+                table: "History",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Notes_AnimalId",
                 table: "Notes",
                 column: "AnimalId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OwnerHistory_AnimalId",
-                table: "OwnerHistory",
-                column: "AnimalId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OwnerHistory_UserId",
-                table: "OwnerHistory",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Treatments_AnimalId",
@@ -393,11 +443,60 @@ namespace WebAnimalPassport.Migrations
                 name: "IX_Vaccinations_DoctorId",
                 table: "Vaccinations",
                 column: "DoctorId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Animals_AspNetUsers_InitialUserId",
+                table: "Animals",
+                column: "InitialUserId",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Animals_AspNetUsers_UserId",
+                table: "Animals",
+                column: "UserId",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                table: "AspNetUserClaims",
+                column: "UserId",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                table: "AspNetUserLogins",
+                column: "UserId",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                table: "AspNetUserRoles",
+                column: "UserId",
+                principalTable: "AspNetUsers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AspNetUsers_Events_EventId",
+                table: "AspNetUsers",
+                column: "EventId",
+                principalTable: "Events",
+                principalColumn: "Id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Events_AspNetUsers_UserId",
+                table: "Events");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -414,10 +513,13 @@ namespace WebAnimalPassport.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Notes");
+                name: "Examinations");
 
             migrationBuilder.DropTable(
-                name: "OwnerHistory");
+                name: "History");
+
+            migrationBuilder.DropTable(
+                name: "Notes");
 
             migrationBuilder.DropTable(
                 name: "Treatments");
@@ -433,6 +535,9 @@ namespace WebAnimalPassport.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Events");
         }
     }
 }

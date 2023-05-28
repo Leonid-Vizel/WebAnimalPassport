@@ -10,7 +10,7 @@
 <div class="">
     <form id="profile-form" method="post" enctype="multipart/form-data">
         <div class="row justify-content-center">
-            <div class="col-md-5">
+            <div class="col-md-6">
                 @if(Model.Input.PhotoPath != null)
                 {
                     <img src="~/src/Users/@Model.Input.PhotoPath" loading="lazy" style="object-fit:cover" class="w-100 rounded-2 mb-3" />
@@ -37,7 +37,7 @@
                     <label for="floatingInput" asp-for="Photo">Изменить фото - Change photo</label>
                 </div>
             </div>
-            <div class="col-md-7">
+            <div class="col-md-6">
                 <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                 <div class="form-floating mb-3">
                     <input asp-for="Input.Surname" class="form-control" placeholder="text" />
