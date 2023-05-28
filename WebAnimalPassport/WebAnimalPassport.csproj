@@ -41,6 +41,7 @@
     <Folder Include="wwwroot\src\Vaccinations\" />
     <Folder Include="wwwroot\src\Users\" />
     <Folder Include="wwwroot\src\Treatments\" />
+    <Folder Include="wwwroot\src\Examinations\" />
   </ItemGroup>
 
 </Project>

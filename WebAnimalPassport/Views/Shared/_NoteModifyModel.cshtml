@@ -1,7 +1,7 @@
-﻿@model WebAnimalPassport.Models.Data.Note.Note
+﻿@model NoteCreateModel
 
 <div class="mb-1">
     <label asp-for="Text" class="form-label"></label>
-    <input asp-for="Text" class="form-control">
+    <textarea asp-for="Text" class="form-control" rows="5"></textarea>
     <span asp-validation-for="Text" class="text-danger"></span>
 </div>
