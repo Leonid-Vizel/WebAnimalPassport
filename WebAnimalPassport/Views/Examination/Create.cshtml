@@ -1,12 +1,12 @@
-﻿@model VaccinationCreateModel
+﻿@model ExaminationCreateModel
 @{
-    ViewData["Title"] = "Добавление вакцинации";
+    ViewData["Title"] = "Добавление клинического осмотра";
 }
 <form method="post" enctype="multipart/form-data">
     <input asp-for="AnimalId" hidden />
     <div class="form-group row">
         <h2 class="text-dark pl-3">@ViewData["Title"]</h2>
-        <partial name="_VaccinationModifyModel" />
+        <partial name="_ExaminationModifyModel" />
     </div>
 </form>
 

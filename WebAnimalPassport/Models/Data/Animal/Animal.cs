@@ -16,6 +16,7 @@ namespace WebAnimalPassport.Models.Data.Animal
         public List<Note.Note> Notes { get; set; }
         public List<Vaccination.Vaccination> Vaccinations { get; set; }
         public List<Treatment.Treatment> Treatments { get; set; }
+        public List<Examination.Examination> Examinations { get; set; }
 
         public Animal() : base() { }
         public Animal(AnimalBase model) : base(model) { }

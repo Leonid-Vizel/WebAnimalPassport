@@ -336,6 +336,67 @@
         </div>
     </div>
 </div>
+<hr>
+<div class="accordion accordion-flush">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-3" aria-controls="collapse-3"><h4 class="p-0 m-0">Клинические осмотры</h4></button>
+        </h2>
+        <div id="collapse-3" class="accordion-collapse collapse" aria-expanded="false">
+            <div class="accordion-body">
+                <table class="table w-100">
+                    <thead>
+                        <tr class="cell-centered">
+                            @if (canModify)
+                            {
+                                <th>Действия</th>
+                            }
+                            <th class="text-nowrap">№ п/п</th>
+                            <th>Декларация - Declaration</th>
+                            <th>Дата - Date</th>
+                            <th>Ветеринарный врач - Veterinarian</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Examinations.Count == 0)
+                        {
+                            <tr class="cell-centered">
+                                <td colspan="@(canModify ? 5 : 4)">Нет осмотров</td>
+                            </tr>
+                        }
+                        @for (int i = 0; i < Model.Examinations.Count; i++)
+                        {
+                            var examination = Model.Examinations[i];
+                            <tr class="cell-centered">
+                                @if (canModify)
+                                {
+                                    <td><a class="btn btn-sm btn-warning" asp-controller="Examination" asp-action="Edit" asp-route-id="@examination.Id"><i class="bi bi-pencil-fill"></i></a></td>
+                                }
+                                <td>@(i + 1)</td>
+                                <td>@examination.Declaration</td>
+                                <td>@examination.Date.ToString("dd.MM.yyyy")</td>
+                                <td>
+                                    @if (examination.Doctor == null)
+                                    {
+                                        @examination.DoctorName
+                                    }
+                                    else
+                                    {
+                                        @examination.Doctor.Surname @examination.Doctor.Name @examination.Doctor.Patronymic
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @if (canModify)
+                {
+                    <a class="btn btn-success w-100" asp-controller="Examination" asp-action="Create" asp-route-id="@Model.Id"><i class="bi bi-plus-lg"></i></a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
 
 <h1 class="text-center">Прочие заметки</h1>
 <hr>

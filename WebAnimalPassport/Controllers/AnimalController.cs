@@ -57,6 +57,8 @@ namespace WebAnimalPassport.Controllers
                 .ThenInclude(x => x.Doctor)
                 .Include(x => x.Treatments.OrderBy(x => x.DateTime))
                 .ThenInclude(x => x.Doctor)
+                .Include(x => x.Examinations)
+                .ThenInclude(x => x.Doctor)
                 .Include(x => x.InitialUser)
                 .FirstOrDefaultAsync(x => x.Id == id);
             if (found == null)
