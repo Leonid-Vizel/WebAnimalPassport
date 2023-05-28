@@ -1,0 +1,64 @@
+﻿@inject SignInManager<CustomUser> SignInManager
+@inject UserManager<CustomUser> UserManager
+
+@model List<Event>
+@{
+    ViewData["Title"] = "Мероприятия";
+    string userId = UserManager.GetUserId(User);
+    List<Event> actual = Model.Where(x => x.DateFinish > DateTime.Now).ToList();
+}
+<h1 class="text-center">@ViewData["Title"]</h1>
+<hr>
+
+<div class="row">
+    @foreach (Event eventEv in actual)
+    {
+        <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+            <div class="card rounded-custom h-100">
+                <a class="btn p-0 border-0 rounded-top btn-outline-success mt-auto" asp-controller="Event" asp-action="Index" asp-route-id="@eventEv.Id">
+                    @if (eventEv.PhotoPath == null)
+                    {
+                        <img class="rounded-custom w-100 h-100" src="~/src/Stocks/NoImage.png">
+                    }
+                    else
+                    {
+                        <img class="rounded-custom w-100 h-100" src="~/src/Events/@eventEv.PhotoPath">
+                    }
+                </a>
+                <h4 class="text-center mt-auto">@eventEv.Name</h4>
+                @if (eventEv.DateStart < DateTime.Now && eventEv.DateFinish > DateTime.Now)
+                {
+                    if (eventEv.DateStart == eventEv.DateFinish)
+                    {
+                        <h5 class="text-success">Дата: @eventEv.DateFinish.ToString("D")</h5>
+                    }
+                    else
+                    {
+                        <h5 class="text-success">Дата: @eventEv.DateStart.ToString("D") - @eventEv.DateFinish.ToString("D")</h5>
+                    }
+                }
+                else
+                {
+                    if (eventEv.DateStart == eventEv.DateFinish)
+                    {
+                        <h5>Дата: @eventEv.DateFinish.ToString("D")</h5>
+                    }
+                    else
+                    {
+                        <h5>Дата: @eventEv.DateStart - @eventEv.DateFinish.ToString("D")</h5>
+                    }
+                }
+        </div>
+    </div>
+    }
+    <div class="col-12 col-sm-6 col-md-3 col-lg-2">
+            @if (Model.Count == 0)
+                {
+                <a class="btn btn-outline-success h-100 w-100 d-flex align-items-center justify-content-center" style="height:234px !important;" asp-controller="Event" asp-action="Create">Объявит о мероприятии</a>
+                }
+                else
+                {
+                <a class="btn btn-outline-success h-100 w-100 d-flex align-items-center justify-content-center" asp-controller="Event" asp-action="Create">Объявит о мероприятии</a>
+                }
+        </div>
+    </div>

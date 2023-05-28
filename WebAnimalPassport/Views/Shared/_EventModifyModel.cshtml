@@ -1,0 +1,26 @@
+﻿@model EventCreateModel
+<div class="mb-1">
+    <label asp-for="Name" class="form-label"></label>
+    <input asp-for="Name" class="form-control">
+    <span asp-validation-for="Name" class="text-danger"></span>
+</div>
+<div class="mb-1">
+    <label asp-for="Description" class="form-label"></label>
+    <input asp-for="Description" class="form-control">
+    <span asp-validation-for="Description" class="text-danger"></span>
+</div>
+<div class="mb-1">
+    <label asp-for="DateStart" class="form-label"></label>
+    <input asp-for="DateStart" type="date" class="form-control">
+    <span asp-validation-for="DateStart" class="text-danger"></span>
+</div>
+<div class="mb-1">
+    <label asp-for="DateFinish" class="form-label"></label>
+    <input asp-for="DateFinish" type="date" class="form-control">
+    <span asp-validation-for="DateFinish" class="text-danger"></span>
+</div>
+<div class="mb-1">
+    <label asp-for="File" class="form-label"></label>
+    <input asp-for="File" class="form-control" accept="image/gif, image/jpeg, image/png">
+    <span asp-validation-for="File" class="text-danger"></span>
+</div>
