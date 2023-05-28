@@ -301,7 +301,6 @@ namespace WebAnimalPassport.Migrations
                 });
 
             modelBuilder.Entity("WebAnimalPassport.Models.Data.Event.Event", b =>
-            modelBuilder.Entity("WebAnimalPassport.Models.Data.Examination.Examination", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -329,6 +328,23 @@ namespace WebAnimalPassport.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("WebAnimalPassport.Models.Data.Examination.Examination", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<long>("AnimalId")
                         .HasColumnType("bigint");
 
@@ -350,9 +366,6 @@ namespace WebAnimalPassport.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Events");
                     b.HasIndex("AnimalId");
 
                     b.HasIndex("DoctorId");
@@ -637,11 +650,10 @@ namespace WebAnimalPassport.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebAnimalPassport.Models.Data.Note.Note", b =>
             modelBuilder.Entity("WebAnimalPassport.Models.Data.Examination.Examination", b =>
                 {
                     b.HasOne("WebAnimalPassport.Models.Data.Animal.Animal", "Animal")
-                        .WithMany()
+                        .WithMany("Examinations")
                         .HasForeignKey("AnimalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -726,6 +738,8 @@ namespace WebAnimalPassport.Migrations
 
             modelBuilder.Entity("WebAnimalPassport.Models.Data.Animal.Animal", b =>
                 {
+                    b.Navigation("Examinations");
+
                     b.Navigation("Notes");
 
                     b.Navigation("Owners");
