@@ -62,7 +62,7 @@
         <h5>Город - City</h5>
         <p>@Model.User.City</p>
         <h5>Регион - Region</h5>
-        <p>@(Model.User.City ?? "Не указан")</p>
+        <p>@(Model.User.Region ?? "Не указан")</p>
         <h5>Страна - Country</h5>
         <p>@(Model.User.Country ?? "Не указана")</p>
     </div>
@@ -104,7 +104,7 @@
                             <h5>Город - City</h5>
                             <p>@oldOwner.User.City</p>
                             <h5>Регион - Region</h5>
-                            <p>@(oldOwner.User.City ?? "Не указан")</p>
+                            <p>@(oldOwner.User.Region ?? "Не указан")</p>
                             <h5>Страна - Country</h5>
                             <p>@(oldOwner.User.Country ?? "Не указана")</p>
                         </div>
@@ -143,7 +143,7 @@
         <h5>Город - City</h5>
         <p>@Model.InitialUser.City</p>
         <h5>Регион - Region</h5>
-        <p>@(Model.InitialUser.City ?? "Не указан")</p>
+        <p>@(Model.InitialUser.Region ?? "Не указан")</p>
         <h5>Страна - Country</h5>
         <p>@(Model.InitialUser.Country ?? "Не указана")</p>
     </div>
@@ -337,8 +337,39 @@
     </div>
 </div>
 
+<h1 class="text-center">Прочие заметки</h1>
+<hr>
+<table class="table w-100">
+    <thead>
+        <tr>
+            <th style="width:10%;"></th>
+            <th style="width:90%;"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Notes.Count == 0)
+        {
+            <tr class="cell-centered">
+                <td colspan="@(canModify ? 2 : 1)">Нет заметок</td>
+            </tr>
+        }
+        @for (int i = 0; i < Model.Notes.Count; i++)
+        {
+            var note = Model.Notes[i];
+            <tr>
+                @if (canModify)
+                {
+                    <td><a class="btn btn-sm btn-warning" asp-controller="Note" asp-action="Edit" asp-route-id="@note.Id"><i class="bi bi-pencil-fill"></i></a></td>
+                }
+                <td style="white-space:pre-wrap">@note.Text</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 @if (canModify)
 {
+    <a class="btn btn-success w-100 mb-1" asp-controller="Note" asp-action="Create" asp-route-id="@Model.Id"><i class="bi bi-plus-lg"></i></a>
     <h1 class="text-center">Действия</h1>
     <hr>
     @if (Model.DeathDate == null)

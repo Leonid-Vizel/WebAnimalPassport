@@ -3,21 +3,16 @@ using Microsoft.EntityFrameworkCore;
 using WebAnimalPassport.Data;
 using WebAnimalPassport.Models.Data.Animal;
 using WebAnimalPassport.Models.Data.Note;
-using WebAnimalPassport.Models.Data.Vaccination;
-using WebAnimalPassport.Models.View.Treatment;
-using WebAnimalPassport.Models.View.Vaccination;
+using WebAnimalPassport.Models.View.Note;
 
 namespace WebAnimalPassport.Controllers
 {
     public class NoteController : Controller
-
     {
         private readonly ApplicationDbContext _context;
-        private IWebHostEnvironment _env;
-        public NoteController(ApplicationDbContext db, IWebHostEnvironment env)
+        public NoteController(ApplicationDbContext db)
         {
             _context = db;
-            _env = env;
         }
 
         #region Create
@@ -27,28 +22,28 @@ namespace WebAnimalPassport.Controllers
             {
                 return NotFound();
             }
-            Note model = new Note()
+            NoteCreateModel model = new NoteCreateModel()
             {
-                Animal = _context.Animals.Find(id),
+                AnimalId = id,
             };
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Note model)
+        public async Task<IActionResult> Create(NoteCreateModel model)
         {
             if (ModelState.ErrorCount > 0)
             {
                 return View(model);
             }
-            Animal? found = await _context.Animals.FindAsync(model.Animal.Id);
+            Animal? found = await _context.Animals.FindAsync(model.AnimalId);
             if (found == null)
             {
                 return NotFound();
             }
             Note note = new Note(model);
-           
+            note.Animal = found;
             await _context.Notes.AddAsync(note);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Animal", new { found.Id });
@@ -64,19 +59,20 @@ namespace WebAnimalPassport.Controllers
             {
                 return NotFound();
             }
-            Note model = new Note(found);
+            NoteEditModel model = new NoteEditModel(found);
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Note model)
+        public async Task<IActionResult> Edit(NoteEditModel model)
         {
             if (ModelState.ErrorCount > 0)
             {
                 return View(model);
             }
             Note? found = await _context.Notes
+                .Include(x=> x.Animal)
                 .FirstOrDefaultAsync(x => x.Id == model.Id);
             if (found == null)
             {
@@ -87,9 +83,8 @@ namespace WebAnimalPassport.Controllers
             {
                 return NotFound();
             }
-            Note note = new Note(model);
-            found.Update(note);
-            _context.Notes.Update(note);
+            found.Update(model);
+            _context.Notes.Update(found);
             await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Animal", new { animal.Id });
         }

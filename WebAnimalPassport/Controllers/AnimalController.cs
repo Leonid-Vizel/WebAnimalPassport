@@ -51,6 +51,7 @@ namespace WebAnimalPassport.Controllers
         {
             Animal? found = await _context.Animals
                 .Include(x => x.User)
+                .Include(x => x.Notes)
                 .Include(x => x.Owners.OrderBy(x=>x.TransmitDate))
                 .Include(x => x.Vaccinations.OrderBy(x => x.StartDate))
                 .ThenInclude(x => x.Doctor)

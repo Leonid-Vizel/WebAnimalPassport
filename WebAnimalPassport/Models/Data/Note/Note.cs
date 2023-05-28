@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using WebAnimalPassport.Models.Data.Animal;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebAnimalPassport.Models.Data.Note
 {
@@ -14,12 +12,7 @@ namespace WebAnimalPassport.Models.Data.Note
             Animal = note.Animal;
             Text = note.Text;
         }
-        public Note()
-        { }
-        public void Update(Note note)
-        {
-            Animal = note.Animal;
-            Text = note.Text;
-        }
+        public Note() : base() { }
+        public Note(NoteBase model) : base(model) { }
     }
 }
