@@ -37,16 +37,16 @@ namespace WebEventPassport.Controllers
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                list = list.Where(v => v.Name.Contains(searchString) || v.DateStart.ToString("D").Contains(searchString) || v.DateFinish.ToString("D").Contains(searchString));
+                list = list.Where(v => v.Name.Contains(searchString) || v.DateStart.ToString().Contains(searchString) || v.DateFinish.ToString().Contains(searchString));
             }
 
             switch (sortOrder)
             {
                 case "date_desc":
-                    list = list.OrderByDescending(v => v.DateStart);
+                    list = list.OrderByDescending(v => v.DateStart).ThenBy(v => v.DateFinish).ThenBy(v => v.Id);
                     break;
                 default:
-                    list = list.OrderBy(v => v.DateStart);
+                    list = list.OrderBy(v => v.DateStart).ThenBy(v => v.DateFinish).ThenBy(v => v.Id);
                     break;
             }
 
