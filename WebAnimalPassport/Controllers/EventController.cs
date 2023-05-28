@@ -21,17 +21,36 @@ namespace WebEventPassport.Controllers
         }
 
         #region List
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(string sortOrder, string searchString)
         {
             string? userId = _userManager.GetUserId(User);
             if (userId == null)
             {
                 return Forbid();
             }
-            List<Event> list = await _context.Events
+
+            ViewData["DateSortParm"] = String.IsNullOrEmpty(sortOrder) ? "date_desc" : "";
+
+            var list = _context.Events
                 .Include(x => x.User)
-                .ToListAsync();
-            return View(list);
+                .AsQueryable();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                list = list.Where(v => v.Name.Contains(searchString) || v.DateStart.ToString("D").Contains(searchString) || v.DateFinish.ToString("D").Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "date_desc":
+                    list = list.OrderByDescending(v => v.DateStart);
+                    break;
+                default:
+                    list = list.OrderBy(v => v.DateStart);
+                    break;
+            }
+
+            return View(await list.ToListAsync());
         }
         #endregion
 
