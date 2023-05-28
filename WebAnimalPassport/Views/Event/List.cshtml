@@ -5,7 +5,7 @@
 @{
     ViewData["Title"] = "Мероприятия";
     string userId = UserManager.GetUserId(User);
-    List<Event> actual = Model.Where(x => x.DateFinish > DateTime.Now).ToList();
+    List<Event> actual = Model.Where(x => x.DateFinish >= DateTime.Today).ToList();
 }
 
 <div class="row mt-3 pb-2">
@@ -25,37 +25,38 @@
     </div>
 </div>
 <hr>
+<div class="d-flex justify-content-center">
+    <a class="btn btn-outline-success btn-lg w-75" asp-controller="Event" asp-action="Create">Объявить о мероприятии</a>
+</div>
 <table class="table table-hover w-100 mt-3 pb-2 cell-centered">
     <tbody class="cell-centered mt-5">
-        @foreach (var eventEv in Model)
+        @foreach (var eventEv in actual)
         {
             <tr>
                 <td class="text-center">
                     <h5>@eventEv.Name</h5>
-                    <h4>
-                        @if (eventEv.DateStart < DateTime.Now && eventEv.DateFinish > DateTime.Now)
+                    @if (eventEv.DateStart <= DateTime.Today && eventEv.DateFinish >= DateTime.Today)
+                    {
+                        if (eventEv.DateStart == eventEv.DateFinish)
                         {
-                            if (eventEv.DateStart == eventEv.DateFinish)
-                            {
-                                <h5 class="text-success">Дата: @eventEv.DateFinish.ToString("D")</h5>
-                            }
-                            else
-                            {
-                                <h5 class="text-success">Дата: @eventEv.DateStart.ToString("D") - @eventEv.DateFinish.ToString("D")</h5>
-                            }
+                            <h5 class="text-success">Дата: @eventEv.DateFinish.ToString("D")</h5>
                         }
                         else
                         {
-                            if (eventEv.DateStart == eventEv.DateFinish)
-                            {
-                                <h5>Дата: @eventEv.DateFinish.ToString("D")</h5>
-                            }
-                            else
-                            {
-                                <h5>Дата: @eventEv.DateStart - @eventEv.DateFinish.ToString("D")</h5>
-                            }
+                            <h5 class="text-success">Дата: @eventEv.DateStart.ToString("D") - @eventEv.DateFinish.ToString("D")</h5>
                         }
-                    </h4>
+                    }
+                    else
+                    {
+                        if (eventEv.DateStart == eventEv.DateFinish)
+                        {
+                            <h5>Дата: @eventEv.DateFinish.ToString("D")</h5>
+                        }
+                        else
+                        {
+                            <h5>Дата: @eventEv.DateStart.ToString("D") - @eventEv.DateFinish.ToString("D")</h5>
+                        }
+                    }
                 </td>
                 <td class="w-25">
                     <a class="btn p-0 border-0 rounded-2 btn-outline-success mt-auto" asp-controller="Event" asp-action="Index" asp-route-id="@eventEv.Id">
@@ -72,14 +73,4 @@
             </tr>
         }
     </tbody>
-    <div class="col-12 col-sm-6 col-md-3 col-lg-2">
-        @if (Model.Count == 0)
-        {
-            <a class="btn btn-outline-success h-100 w-100 d-flex align-items-center justify-content-center" style="height:234px !important;" asp-controller="Event" asp-action="Create">Объявить о мероприятии</a>
-        }
-        else
-        {
-            <a class="btn btn-outline-success h-100 w-100 d-flex align-items-center justify-content-center" asp-controller="Event" asp-action="Create">Объявить о мероприятии</a>
-        }
-    </div>
 </table>
