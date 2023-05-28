@@ -42,6 +42,7 @@
     <Folder Include="wwwroot\src\Users\" />
     <Folder Include="wwwroot\src\Treatments\" />
     <Folder Include="wwwroot\src\Events\" />
+    <Folder Include="wwwroot\src\Examinations\" />
   </ItemGroup>
 
 </Project>

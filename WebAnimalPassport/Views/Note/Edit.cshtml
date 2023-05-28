@@ -1,14 +1,14 @@
-﻿@model WebAnimalPassport.Models.Data.Note.Note
+﻿@model NoteEditModel
 @{
-    ViewData["Title"] = "Создание дополнительной заметки";
+    ViewData["Title"] = "Изменение дополнительной заметки";
 }
 <h1 class="text-center">@ViewData["Title"]</h1>
 <form method="post">
-    <input asp-for="Animal.Id" hidden>
+    <input asp-for="Id" hidden>
     <partial name="_NoteModifyModel" />
     <div class="row">
         <div class="col-6">
-            <a role="button" class="btn btn-dark w-100" asp-controller="Animal" asp-action="Index">Назад</a>
+            <a role="button" class="btn btn-dark w-100" asp-controller="Animal" asp-action="Index" asp-route-id="@Model.AnimalId">Назад</a>
         </div>
         <div class="col-6">
             <button type="submit" class="btn btn-success w-100">Сохранить</button>
