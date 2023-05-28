@@ -1,1 +1,56 @@
-﻿
+﻿@inject UserManager<CustomUser> UserManager
+
+@model Event
+@{
+    ViewData["Title"] = Model.Name;
+    bool canModify = await UserManager.GetUserAsync(User) == Model.User;
+}
+<h1 class="text-center">@ViewData["Title"]</h1>
+<hr>
+
+<div class="row">
+    <div class="row justify-content-around">
+        <div class="col-12 col-lg-3">
+            @if (Model.PhotoPath != null)
+            {
+                <img class="rounded-custom h-100" src="~/src/Events/@Model.PhotoPath">
+            }
+            else
+            {
+                <img class="rounded-custom h-100" src="~/src/Stocks/NoImage.png">
+            }
+        </div>
+        <div class="col-12 col-sm-4">
+            <h5>Название - Name</h5>
+            <p>@Model.Name</p>
+            <h5>Организатор - Organizer</h5>
+            <p>@Model.User.Surname @Model.User.Name @Model.User.Patronymic</p>
+            @if (Model.User.PhoneNumber != null)
+            {
+                <h5>Телефон - Phone</h5>
+                <p>@Model.User.PhoneNumber</p>
+            }
+            @if (Model.User.Email != null)
+            {
+                <h5>Телефон - Email</h5>
+                <p>@Model.User.Email</p>
+            }
+            <h5>Почта - Mail</h5>
+            <p>@Model.User.Surname @Model.User.Name @Model.User.Patronymic</p>
+            <h5>Даты проведения - Dates</h5>
+            <p>@Model.DateStart.ToString("D") - @Model.DateFinish.ToString("D")</p>
+            <h5>Место проведения - Location</h5>
+            <p>Улица Пушкина, дом 69</p>
+        </div>
+        <div class="col-12 col-sm-4">
+            <h5>Описание - Description</h5>
+            <p>@Model.Description</p>
+        </div>
+    </div>
+</div>
+
+@if (canModify)
+{
+    <hr class="mt-2">
+    <a class="btn btn-warning w-100" asp-controller="Event" asp-action="Edit" asp-route-id="@Model.Id">Редатировать</a>
+}
